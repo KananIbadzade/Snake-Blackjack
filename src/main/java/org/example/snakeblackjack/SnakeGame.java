@@ -23,8 +23,12 @@ import javafx.util.Duration;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.ListIterator;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicBoolean;
+
+import javafx.geometry.Point2D;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 
 public class SnakeGame extends Application {
@@ -32,18 +36,49 @@ public class SnakeGame extends Application {
     public enum Direction {
         LEFT, RIGHT, UP, DOWN
     }
+    private double headX ;
+    private double headY;
     private Direction direction = Direction.UP; //default direction
-    private ArrayList<Rectangle> snakeBody = new ArrayList<>();
-    private Rectangle snakeHead;
+
+    private static ArrayList<BodyPart> snakeBody = new ArrayList<>(); //keep track of the snake body
     private int score = 0;
     private int lastScore = 0;
-    private Rectangle food;
+    private final double SPEED_BONUS = 0.1;
+    private double speed = 5.0;
+    //private Deque<Point2D> headTrail = new ArrayDeque<>();
+    private int SPACING_FRAMES = ( (int) (30.0 / speed) + 1);
+
 
     private Timeline timeline;
-    private Timeline timeline2;
 
-    private Stage primaryStage;
+     private static class BodyPart{
+         Deque<Point2D> nodeTrail = new ArrayDeque<>();
+         Rectangle bodyPart;
 
+         public BodyPart(Rectangle bodyPart){
+             this.bodyPart = bodyPart;
+             nodeTrail.addFirst(new Point2D(bodyPart.getX(), bodyPart.getY())); //store the init pos
+         }
+
+         public void setPosition (Point2D position){
+             bodyPart.setX(position.getX());
+             bodyPart.setY(position.getY());
+         }
+
+         public void addPosition(Point2D position){
+             nodeTrail.addFirst(position);
+         }
+
+         public void updateDequeueSize(int frameSpace){
+             //nodeTrail.addFirst(new Point2D(bodyPart.getX(), bodyPart.getY()));
+             while(nodeTrail.size() > frameSpace){
+                 nodeTrail.removeLast();
+             } //always maintaining a dequeue such that the last element is the next render position
+         }
+         public Point2D getProperRenderPosition(){
+             return nodeTrail.getLast();
+         }
+     }
 
 
     private void gameLoop(Stage stage) {
@@ -68,27 +103,116 @@ public class SnakeGame extends Application {
 
     public void midGame(Scene scene) {
 
-        Rectangle snakeHead = (Rectangle)scene.getRoot().getChildrenUnmodifiable().get(1); //the snakehead
+        Rectangle snakeHead = (Rectangle)scene.getRoot().getChildrenUnmodifiable().get(0); //the snakehead
         Rectangle food = (Rectangle)scene.getRoot().getChildrenUnmodifiable().get(2); //the food
         Text actualScore = (Text)scene.getRoot().getChildrenUnmodifiable().get(3);
-        double foodX = food.getX();
-        double foodY = food.getY();
-        //AtomicBoolean eaten = new AtomicBoolean(false);
 
         // Create the timeline only once
         if (timeline == null) {
             timeline = new Timeline(
-                new KeyFrame(Duration.millis(30), e -> moveSnake(snakeHead)),
-                new KeyFrame(Duration.millis(30), e -> checkFood(snakeHead, food, scene)), //score updated here
-                new KeyFrame(Duration.millis(30), e -> updateScore(actualScore))
+                new KeyFrame(Duration.millis(20), e -> moveSnakeHead(snakeHead, speed)), // move the snake head for 1 frame
+                new KeyFrame(Duration.millis(20), e -> moveSnakeBody(headX, headY)),
+                new KeyFrame(Duration.millis(20), e -> checkFood(snakeHead, food, scene)), //score updated here
+                new KeyFrame(Duration.millis(20), e -> updateScore(actualScore))
             );
             timeline.setCycleCount(Timeline.INDEFINITE);
         }
-
         timeline.play();
+    }
 
+
+
+    //factory method to create snake body parts and add them to the snake body ArrayList
+    public void getNewSnakeBodyPart(double initX, double initY, Group root) {
+        Point2D renderPos = snakeBody.isEmpty() ? new Point2D(initX, initY)
+            : snakeBody.getLast().getProperRenderPosition();
+
+        Rectangle bodyPart = new Rectangle(renderPos.getX(), renderPos.getY(), 20, 20);
+        bodyPart.setFill(Color.rgb(51, 255, 153)); //neon green for body parts
+        bodyPart.setStroke(Color.rgb(0,0,0)); //show the outline
+        if(snakeBody.isEmpty()){bodyPart.setFill(Color.rgb(28,122,44));} // dark green for snake head
+
+        BodyPart newPart = new BodyPart(bodyPart);
+        for (int i = 0; i < SPACING_FRAMES; i++) {
+            newPart.addPosition(new Point2D(renderPos.getX(), renderPos.getY()));
+        }
+
+        snakeBody.add(newPart); //add to snakeBody list
+        root.getChildren().add(bodyPart); //render
+    }
+
+    // Snake Movement
+    private void moveSnakeHead(Rectangle snakeHead, double UNIT_SIZE) {
+
+        if (direction.equals(Direction.UP)) {
+            snakeHead.setY(snakeHead.getY() - UNIT_SIZE);
+        } else if (direction.equals(Direction.DOWN)) {
+            snakeHead.setY(snakeHead.getY() + UNIT_SIZE);
+        } else if (direction.equals(Direction.LEFT)) {
+            snakeHead.setX(snakeHead.getX() - UNIT_SIZE);
+        } else if (direction.equals(Direction.RIGHT)) {
+            snakeHead.setX(snakeHead.getX() + UNIT_SIZE);
+        }
+        SPACING_FRAMES = ((int) (30.0 / UNIT_SIZE) + 1);
+        snakeBody.getFirst().addPosition(new Point2D(snakeHead.getX(), snakeHead.getY()));
+        snakeBody.getFirst().updateDequeueSize(SPACING_FRAMES); //update the snakeHead
 
     }
+
+    private void updatePosition(double speed) {
+         int frameSpace = ((int) (30.0 / speed) + 1);
+         snakeBody.forEach(bodyPart -> bodyPart.updateDequeueSize(frameSpace));
+    }
+
+
+    public void moveSnakeBody(double snakeHeadX, double snakeHeadY) {
+
+         if(snakeBody.size() == 1){ return;} // early return if there's only the head
+
+        //if there are more than 0 body parts
+         ListIterator<BodyPart> iterator = snakeBody.listIterator(1);
+         int previousIndex = 0; // start from the head as the first previous index
+         SPACING_FRAMES = ( (int) (30.0 / speed) + 1);
+
+
+        BodyPart previous = snakeBody.getFirst(); // start from the head
+
+        while (iterator.hasNext()) {
+            BodyPart current = iterator.next();
+            Point2D nextPos = previous.getProperRenderPosition();
+            current.addPosition(nextPos);
+            current.setPosition(nextPos);
+            current.updateDequeueSize(SPACING_FRAMES);
+            previous = current;
+        }
+
+    }
+
+    public void checkFood(Rectangle snakeHead, Rectangle food, Scene gameScene) { //pass in the current cord of the snakeHead
+        if (snakeHead.getBoundsInParent().intersects(food.getBoundsInParent())) {
+            double padding = 20;
+
+            // Scene dimensions
+            double sceneWidth = gameScene.getWidth();
+            double sceneHeight = gameScene.getHeight();
+
+            // Random generator
+            Random random = new Random();
+
+            // Random X and Y within the padded area
+            food.setX( padding + random.nextDouble() * (sceneWidth - 2 * padding));
+            food.setY( padding + random.nextDouble() * (sceneHeight - 2 * padding));
+
+            //actions
+            speed += SPEED_BONUS; //increment speed
+            score++; //increment score
+            Point2D position = snakeBody.getLast().getProperRenderPosition();
+            getNewSnakeBodyPart(position.getX(), position.getY(), (Group)gameScene.getRoot());
+
+        }
+
+    }
+
 
     private void updateScore(Text actualScore) {
         if(lastScore == score) {
@@ -101,26 +225,7 @@ public class SnakeGame extends Application {
 
     }
 
-    public void checkFood(Rectangle snakeHead, Rectangle food, Scene gameScene) { //pass in the current cord of the snakeHead
-        if (snakeHead.getBoundsInParent().intersects(food.getBoundsInParent())) {
-            double padding = 20;
 
-// Scene dimensions
-            double sceneWidth = gameScene.getWidth();
-            double sceneHeight = gameScene.getHeight();
-
-// Random generator
-            Random random = new Random();
-
-// Random X and Y within the padded area
-            food.setX( padding + random.nextDouble() * (sceneWidth - 2 * padding));
-            food.setY( padding + random.nextDouble() * (sceneHeight - 2 * padding));
-
-            score++;
-
-        }
-
-    }
 
     public void handleKeyPressGameScene(Stage stage) {
 
@@ -130,6 +235,7 @@ public class SnakeGame extends Application {
         gameScene.setOnKeyPressed(new EventHandler<>() {
             @Override
             public void handle(KeyEvent event) {
+                System.out.println("Speed: " + speed);
                 if (event.getCode() == KeyCode.UP && !direction.equals(Direction.DOWN)) {
                     direction = Direction.UP;
                 } else if (event.getCode() == KeyCode.DOWN && !direction.equals(Direction.UP)) {
@@ -140,6 +246,7 @@ public class SnakeGame extends Application {
                     direction = Direction.RIGHT;
                 } else if (event.getCode() == KeyCode.ESCAPE) {
                     inGame = false;
+                    //stage.setScene(getPreScene());
                     System.out.println("game Stopped");
                 }
             }
@@ -171,19 +278,7 @@ public class SnakeGame extends Application {
 
     }
 
-    // Snake Movement
-    private void moveSnake(Rectangle snakeHead) {
-        int UNIT_SIZE =5;
-        if (direction.equals(Direction.UP)) {
-            snakeHead.setY(snakeHead.getY() - UNIT_SIZE);
-        } else if (direction.equals(Direction.DOWN)) {
-            snakeHead.setY(snakeHead.getY() + UNIT_SIZE);
-        } else if (direction.equals(Direction.LEFT)) {
-            snakeHead.setX(snakeHead.getX() - UNIT_SIZE);
-        } else if (direction.equals(Direction.RIGHT)) {
-            snakeHead.setX(snakeHead.getX() + UNIT_SIZE);
-        }
-    }
+
 
     //this scene will be loaded when the game first started
     private Scene getPreScene(){
@@ -215,23 +310,20 @@ public class SnakeGame extends Application {
 
         Text actualScore = new Text(75, 22, "0");
         actualScore.setFont(Font.font(null, FontWeight.NORMAL, 20));
-        actualScore.setFill(Color.rgb(153,204,102)); //light green
+        actualScore.setFill(Color.rgb(204,102,0)); //dark orange
 
 
-        Rectangle snakeHead = new Rectangle();
-        snakeHead.setFill(Color.GREEN);
-        snakeHead.setWidth(20);
-        snakeHead.setHeight(20);
-        snakeHead.setX(380);
-        snakeHead.setY(250);
+        getNewSnakeBodyPart(380, 250, root); //init the snakebody with the snake head
+        //snake head is automatically added to the root
 
         Rectangle food = getNewFood(gameScene);
 
 
         root.getChildren().add(text);
-        root.getChildren().add(snakeHead);
+
         root.getChildren().add(food);
         root.getChildren().add(actualScore);
+
 
 
         return gameScene;
