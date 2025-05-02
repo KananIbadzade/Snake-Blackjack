@@ -10,8 +10,8 @@ import java.io.IOException;
 
 public class BlackJack extends Application {
 
-    public static void launchGame() {
-        try{new BlackJack().start(new Stage());}
+    public static void launchGame(Stage stage) {
+        try{new BlackJack().start(stage);}
         catch (IOException e){}// start the JavaFX lifecycle
     }
 
@@ -26,7 +26,7 @@ public class BlackJack extends Application {
         Image icon = new Image(input);
 
         stage.getIcons().add(icon); */
-        stage.setTitle("Best Snake Game in the World");
+        stage.setTitle("Best Black Jack Game in the World");
         stage.setWidth(800);
         stage.setHeight(600);
         stage.setResizable(false);
@@ -37,7 +37,6 @@ public class BlackJack extends Application {
             if ((event.getCode() == KeyCode.SPACE)) {
                 event.consume();
                 stage.setScene(gameScene);
-
             }
         });
 

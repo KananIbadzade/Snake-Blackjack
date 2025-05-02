@@ -5,14 +5,19 @@ import javafx.stage.Stage;
 
 public class GameManager extends Application {
 
+
+    @Override
+    public void start(Stage primaryStage) {
+        Stage blackJackStage = new Stage();
+        Stage snakeStage = new Stage();
+        SnakeGame.launchGame(snakeStage);
+        BlackJack.launchGame(blackJackStage);
+
+    }
+
     public static void launchManager(String[] args) {
         launch(args);
     }
 
-    @Override
-    public void start(Stage primaryStage) {
-             SnakeGame.launchGame();
-             BlackJack.launchGame();
 
-    }
 }
