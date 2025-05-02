@@ -9,14 +9,14 @@ import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
+import javafx.scene.shape.Shape;
+import javafx.scene.text.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -41,6 +41,10 @@ public class SnakeGame extends Application {
     private double headY;
     private Direction direction = Direction.UP; //default direction
 
+    //initial position of snakeHead
+    private final double SNAKE_HEAD_INIT_X = 380;
+    private final double SNAKE_HEAD_INIT_Y = 250;
+
     private static ArrayList<BodyPart> snakeBody = new ArrayList<>(); //keep track of the snake body
     private int score = 0;
     private int lastScore = 0;
@@ -49,9 +53,11 @@ public class SnakeGame extends Application {
     //private Deque<Point2D> headTrail = new ArrayDeque<>();
     private int SPACING_FRAMES = ( (int) (30.0 / speed) + 1);
     private Text gameOverText;
-
+    private TextFlow gameRestartHint;
+    private Rectangle wallBox;
 
     private Timeline timeline;
+    private AnimationTimer gameLoop;
 
      private static class BodyPart{
          Deque<Point2D> nodeTrail = new ArrayDeque<>();
@@ -83,24 +89,40 @@ public class SnakeGame extends Application {
      }
 
 
-    private void gameLoop(Stage stage) {
-        // Create an AnimationTimer that will run on each frame
-        AnimationTimer gameLoop = new AnimationTimer() {
-            @Override
-            public void handle(long now) {
-                if(inGame){
-                    gameInit();
-                    // Call the method that processes the game logic each frame
-                    handleKeyPressGameScene(stage);
-                    midGame(stage, stage.getScene());
+    private void startGameLoop(Stage stage) {
+        if (gameLoop == null) {
+            gameLoop = new AnimationTimer() {
+                @Override
+                public void handle(long now) {
+                    if (inGame) {
+                        handleKeyPressGameScene(stage);
+                        midGame(stage, stage.getScene());
+                    }
                 }
-            }
-        };
-        gameLoop.start();  // Start the game loop
-
+            };
+        }
+        gameLoop.start(); // restart if previously stopped
     }
 
-    private void gameInit() {
+    private void restartGame(Stage stage) {
+        inGame = false;  // Stop logic temporarily
+
+        //reset the game state
+        score = 0;
+        lastScore = 0;
+        direction = Direction.UP;
+        speed = 5.0; //reset to default speed
+        gameOverText.setVisible(false);
+        gameRestartHint.setVisible(false);
+        timeline = null;
+
+        snakeBody.clear();
+
+        Scene scene = getGameScene();
+        stage.setScene(scene);
+
+        inGame = true; // resume the game
+        startGameLoop(stage); // this just starts the same AnimationTimer again
 
     }
 
@@ -118,7 +140,7 @@ public class SnakeGame extends Application {
                 new KeyFrame(Duration.millis(20), e -> moveSnakeBody(headX, headY)),
                 new KeyFrame(Duration.millis(20), e -> checkFood(snakeHead, food, scene)), //score updated here
                 new KeyFrame(Duration.millis(20), e -> snakeWallCollision(snakeHead, stage)),
-                new KeyFrame(Duration.millis(20), e -> snakeBodyCollision(snakeHead, stage)),
+                //new KeyFrame(Duration.millis(20), e -> snakeBodyCollision(snakeHead, stage)),
                 new KeyFrame(Duration.millis(20), e -> updateScore(actualScore))
             );
             timeline.setCycleCount(Timeline.INDEFINITE);
@@ -134,9 +156,12 @@ public class SnakeGame extends Application {
             : snakeBody.getLast().getProperRenderPosition();
 
         Rectangle bodyPart = new Rectangle(renderPos.getX(), renderPos.getY(), 20, 20);
-        bodyPart.setFill(Color.rgb(51, 255, 153)); //neon green for body parts
+        if(snakeBody.isEmpty()){
+            bodyPart.setFill(Color.rgb(28,122,44));} // dark green for snake head
+        else{bodyPart.setFill(Color.rgb(51, 255, 153));} //neon green for body parts
+
         bodyPart.setStroke(Color.rgb(0,0,0)); //show the outline
-        if(snakeBody.isEmpty()){bodyPart.setFill(Color.rgb(28,122,44));} // dark green for snake head
+
 
         BodyPart newPart = new BodyPart(bodyPart);
         for (int i = 0; i < SPACING_FRAMES; i++) {
@@ -211,23 +236,52 @@ public class SnakeGame extends Application {
     }
 
     public void snakeWallCollision(Rectangle snakeHead, Stage stage) {
-        double sceneWidth = stage.getScene().getWidth();
-        double sceneHeight = stage.getScene().getHeight();
+        double buffer = 3; // Simulate stroke width
 
-        if (snakeHead.getX() < 0 || snakeHead.getX() > sceneWidth - snakeHead.getWidth() ||
-                snakeHead.getY() < 0 || snakeHead.getY() > sceneHeight - snakeHead.getHeight()) {
+        //outer bounds of the snakeHead
+        double headX = snakeHead.getX();
+        double headY = snakeHead.getY();
+        double headWidth = snakeHead.getWidth();
+        double headHeight = snakeHead.getHeight();
 
+        //inner Bounds of the rectangle
+        double left = wallBox.getX();
+        double right = wallBox.getX() + wallBox.getWidth();
+        double top = wallBox.getY();
+        double bottom = wallBox.getY() + wallBox.getHeight();
+
+        // Check if head is within the stroke area (3-pixel-wide band)
+        boolean touchLeft = headX <= left + buffer && headX + headWidth >= left;
+        boolean touchRight = headX + headWidth >= right - buffer && headX <= right;
+        boolean touchTop = headY <= top + buffer && headY + headHeight >= top;
+        boolean touchBottom = headY + headHeight >= bottom - buffer && headY <= bottom;
+
+        if (touchLeft || touchRight || touchTop || touchBottom) {
+            System.out.println("Collision with stroke only.");
             gameOver(stage);
         }
     }
+
     private void gameOver(Stage stage) {
         timeline.stop();
         inGame = false;
+        double textWidth = gameOverText.getLayoutBounds().getWidth();
+        double textHeight = gameOverText.getLayoutBounds().getHeight();
+        double rectCenterX = wallBox.getX() + wallBox.getWidth() / 2;
+        double rectCenterY = wallBox.getY() + wallBox.getHeight() / 2;
+
+        gameOverText.setX(rectCenterX - textWidth / 2);
+        gameRestartHint.setLayoutX(gameOverText.getX() + 10);
+        gameOverText.setY(rectCenterY + textHeight / 4);
+        gameRestartHint.setLayoutY(gameOverText.getY() + 35);
+
         System.out.println("Game Over!");
         gameOverText.setVisible(true);
-
-        //stage.setScene(getPreScene());
+        gameRestartHint.setVisible(true);
+        gameRestartHint.toFront();
+        gameOverText.toFront();
     }
+
     public void checkFood(Rectangle snakeHead, Rectangle food, Scene gameScene) { //pass in the current cord of the snakeHead
         if (snakeHead.getBoundsInParent().intersects(food.getBoundsInParent())) {
             double padding = 20;
@@ -276,6 +330,13 @@ public class SnakeGame extends Application {
             @Override
             public void handle(KeyEvent event) {
                 if(!inGame) {
+                    if(event.getCode() == KeyCode.SPACE) {
+
+
+                        event.consume();
+
+                        restartGame(stage);
+                    }
                     return;
                 }
                 System.out.println("Speed: " + speed);
@@ -292,6 +353,7 @@ public class SnakeGame extends Application {
                     //stage.setScene(getPreScene());
                     System.out.println("game Stopped");
                 }
+                event.consume();
             }
         });
 
@@ -301,21 +363,21 @@ public class SnakeGame extends Application {
     }
 
     private Rectangle getNewFood(Scene scene) {
-        double padding = 20;
+        double margin = 3;
+        double rectWidth = 20;
+        double rectHeight = 20;
 
-// Scene dimensions
-        double sceneWidth = scene.getWidth();
-        double sceneHeight = scene.getHeight();
+        double minX = wallBox.getX() + margin;
+        double maxX = wallBox.getX() + wallBox.getWidth() - margin - rectWidth;
 
-// Random generator
-        Random random = new Random();
+        double minY = wallBox.getY() + margin;
+        double maxY = wallBox.getY() + wallBox.getHeight() - margin - rectHeight;
 
-// Random X and Y within the padded area
-        double x = padding + random.nextDouble() * (sceneWidth - 2 * padding);
-        double y = padding + random.nextDouble() * (sceneHeight - 2 * padding);
+        double randomX = minX + Math.random() * (maxX - minX);
+        double randomY = minY + Math.random() * (maxY - minY);
 
-// Create the rectangle
-        Rectangle food =  new Rectangle(x, y, 20, 20); // 20x20 size
+        Rectangle food = new Rectangle(randomX, randomY, rectWidth, rectHeight);
+
         food.setFill(Color.RED);
         return food;
 
@@ -344,6 +406,15 @@ public class SnakeGame extends Application {
         Scene gameScene = new Scene(root, 800, 600);
         gameScene.setFill(Color.rgb(204,255,255)); //lightblue
 
+        wallBox = new Rectangle(8, 30, 770, 520);
+        wallBox.setStroke(Color.web("231D2C"));
+        wallBox.setStrokeWidth(3);
+        Glow glow = new Glow();
+        glow.setLevel(0.2);
+        wallBox.setEffect(glow);
+
+        wallBox.setFill(Color.TRANSPARENT);
+
         Text text = new Text();
         text.setText("Score: ");
         text.setX(8);
@@ -356,7 +427,7 @@ public class SnakeGame extends Application {
         actualScore.setFill(Color.rgb(204,102,0)); //dark orange
 
 
-        getNewSnakeBodyPart(380, 250, root); //init the snakebody with the snake head
+        getNewSnakeBodyPart(SNAKE_HEAD_INIT_X, SNAKE_HEAD_INIT_Y, root); //init the snakebody with the snake head
         //snake head is automatically added to the root
 
         Rectangle food = getNewFood(gameScene);
@@ -368,12 +439,31 @@ public class SnakeGame extends Application {
         gameOverText.setFont(Font.font("Verdana", FontWeight.BOLD, 50));
         gameOverText.setVisible(false);
 
+        Text hintFirstPortion = new Text("Press ");
+        hintFirstPortion.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
+        hintFirstPortion.setFill(Color.web("22b078"));
+
+        Text hintItalicPortion = new Text("SPACE");
+        hintItalicPortion.setFont(Font.font("Verdana", FontWeight.BOLD, FontPosture.ITALIC, 20));
+        hintItalicPortion.setFill(Color.web("22b078"));
+
+
+        Text hintLastPortion = new Text(" to restart");
+        hintLastPortion.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
+        hintLastPortion.setFill(Color.web("22b078"));
+
+        gameRestartHint = new TextFlow(hintFirstPortion, hintItalicPortion, hintLastPortion);
+        gameRestartHint.setVisible(false);
+        gameOverText.setVisible(false);
+
 
         root.getChildren().add(text);
         root.getChildren().add(food);
         root.getChildren().add(actualScore);
 
         root.getChildren().add(gameOverText);
+        root.getChildren().add(gameRestartHint);
+        root.getChildren().add(wallBox);
 
 
         return gameScene;
@@ -387,7 +477,7 @@ public class SnakeGame extends Application {
         Scene preScene = getPreScene();
         Scene gameScene = getGameScene();
 
-        /* ocmmented out setting the icon code May.01.25
+        /* commented out setting the icon code May.01.25
         InputStream input = getClass().getResourceAsStream("/icon.png");
         Image icon = new Image(input);
 
@@ -404,9 +494,10 @@ public class SnakeGame extends Application {
 
         preScene.setOnKeyPressed(event -> {
             if ((event.getCode() == KeyCode.SPACE)) {
+                event.consume();
                 stage.setScene(gameScene);
                 inGame = true;
-                gameLoop(stage);
+                startGameLoop(stage);
             }
         });
 
