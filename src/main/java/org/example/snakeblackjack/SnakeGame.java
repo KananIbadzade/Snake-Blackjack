@@ -22,6 +22,7 @@ import javafx.util.Duration;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.ListIterator;
 import java.util.Random;
@@ -47,6 +48,7 @@ public class SnakeGame extends Application {
     private double speed = 5.0;
     //private Deque<Point2D> headTrail = new ArrayDeque<>();
     private int SPACING_FRAMES = ( (int) (30.0 / speed) + 1);
+    private Text gameOverText;
 
 
     private Timeline timeline;
@@ -86,10 +88,12 @@ public class SnakeGame extends Application {
         AnimationTimer gameLoop = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                gameInit();
-                // Call the method that processes the game logic each frame
-                handleKeyPressGameScene(stage);
-                midGame(stage.getScene());
+                if(inGame){
+                    gameInit();
+                    // Call the method that processes the game logic each frame
+                    handleKeyPressGameScene(stage);
+                    midGame(stage, stage.getScene());
+                }
             }
         };
         gameLoop.start();  // Start the game loop
@@ -101,7 +105,7 @@ public class SnakeGame extends Application {
     }
 
 
-    public void midGame(Scene scene) {
+    public void midGame(Stage stage, Scene scene) {
 
         Rectangle snakeHead = (Rectangle)scene.getRoot().getChildrenUnmodifiable().get(0); //the snakehead
         Rectangle food = (Rectangle)scene.getRoot().getChildrenUnmodifiable().get(2); //the food
@@ -113,6 +117,8 @@ public class SnakeGame extends Application {
                 new KeyFrame(Duration.millis(20), e -> moveSnakeHead(snakeHead, speed)), // move the snake head for 1 frame
                 new KeyFrame(Duration.millis(20), e -> moveSnakeBody(headX, headY)),
                 new KeyFrame(Duration.millis(20), e -> checkFood(snakeHead, food, scene)), //score updated here
+                new KeyFrame(Duration.millis(20), e -> snakeWallCollision(snakeHead, stage)),
+                new KeyFrame(Duration.millis(20), e -> snakeBodyCollision(snakeHead, stage)),
                 new KeyFrame(Duration.millis(20), e -> updateScore(actualScore))
             );
             timeline.setCycleCount(Timeline.INDEFINITE);
@@ -187,7 +193,41 @@ public class SnakeGame extends Application {
         }
 
     }
+    public void snakeBodyCollision(Rectangle snakeHead, Stage stage) {
+         if(snakeBody.size() > 3) {
+             for (int i = 1; i < snakeBody.size(); i++) {
+                 BodyPart bodyPart = snakeBody.get(i);
 
+                 double disX = snakeHead.getX() - bodyPart.bodyPart.getX();
+                 double disY = snakeHead.getY() - bodyPart.bodyPart.getY();
+                 double distance = Math.sqrt(disX * disX + disY * disY);
+
+                 if (distance < 10) {
+                     gameOver(stage);
+                     break;
+                 }
+             }
+         }
+    }
+
+    public void snakeWallCollision(Rectangle snakeHead, Stage stage) {
+        double sceneWidth = stage.getScene().getWidth();
+        double sceneHeight = stage.getScene().getHeight();
+
+        if (snakeHead.getX() < 0 || snakeHead.getX() > sceneWidth - snakeHead.getWidth() ||
+                snakeHead.getY() < 0 || snakeHead.getY() > sceneHeight - snakeHead.getHeight()) {
+
+            gameOver(stage);
+        }
+    }
+    private void gameOver(Stage stage) {
+        timeline.stop();
+        inGame = false;
+        System.out.println("Game Over!");
+        gameOverText.setVisible(true);
+
+        //stage.setScene(getPreScene());
+    }
     public void checkFood(Rectangle snakeHead, Rectangle food, Scene gameScene) { //pass in the current cord of the snakeHead
         if (snakeHead.getBoundsInParent().intersects(food.getBoundsInParent())) {
             double padding = 20;
@@ -235,6 +275,9 @@ public class SnakeGame extends Application {
         gameScene.setOnKeyPressed(new EventHandler<>() {
             @Override
             public void handle(KeyEvent event) {
+                if(!inGame) {
+                    return;
+                }
                 System.out.println("Speed: " + speed);
                 if (event.getCode() == KeyCode.UP && !direction.equals(Direction.DOWN)) {
                     direction = Direction.UP;
@@ -318,12 +361,19 @@ public class SnakeGame extends Application {
 
         Rectangle food = getNewFood(gameScene);
 
+        gameOverText = new Text("GAME OVER");
+        gameOverText.setX(250);  // depends on your scene width
+        gameOverText.setY(300);
+        gameOverText.setFill(Color.RED);
+        gameOverText.setFont(Font.font("Verdana", FontWeight.BOLD, 50));
+        gameOverText.setVisible(false);
+
 
         root.getChildren().add(text);
-
         root.getChildren().add(food);
         root.getChildren().add(actualScore);
 
+        root.getChildren().add(gameOverText);
 
 
         return gameScene;
@@ -337,8 +387,8 @@ public class SnakeGame extends Application {
         Scene preScene = getPreScene();
         Scene gameScene = getGameScene();
 
-        FileInputStream fileInputStream = new FileInputStream(".\\src\\main\\resources\\icon.png");
-        Image icon = new Image(fileInputStream);
+        InputStream input = getClass().getResourceAsStream("/icon.png");
+        Image icon = new Image(input);
 
         stage.getIcons().add(icon);
         stage.setTitle("Best Snake Game in the World");
