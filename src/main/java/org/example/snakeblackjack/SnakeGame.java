@@ -387,10 +387,11 @@ public class SnakeGame extends Application {
         Scene preScene = getPreScene();
         Scene gameScene = getGameScene();
 
+        /* ocmmented out setting the icon code May.01.25
         InputStream input = getClass().getResourceAsStream("/icon.png");
         Image icon = new Image(input);
 
-        stage.getIcons().add(icon);
+        stage.getIcons().add(icon); */
         stage.setTitle("Best Snake Game in the World");
         stage.setWidth(800);
         stage.setHeight(600);
