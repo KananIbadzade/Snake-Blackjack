@@ -523,7 +523,8 @@ public class SnakeGame extends Application {
     }
 
 
-    public static void launchGame(String[] args) {
-        launch(args);  // start the JavaFX lifecycle
+    public static void launchGame() {
+        try{new SnakeGame().start(new Stage());}
+        catch (IOException e){}// start the JavaFX lifecycle
     }
 }
