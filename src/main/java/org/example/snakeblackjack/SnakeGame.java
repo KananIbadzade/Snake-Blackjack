@@ -496,8 +496,9 @@ public class SnakeGame extends Application {
         /* commented out setting the icon code May.01.25
         InputStream input = getClass().getResourceAsStream("/icon.png");
         Image icon = new Image(input);
+        Image image = new Image("https://drive.google.com/uc?export=view&id=1mnLEnbq6SLHUx_sIfNVAlQJK7Yc9f0zp");
 
-        stage.getIcons().add(icon); */
+        stage.getIcons().add(image);*/
         stage.setTitle("Best Snake Game in the World");
         stage.setWidth(800);
         stage.setHeight(600);
@@ -525,6 +526,6 @@ public class SnakeGame extends Application {
 
     public static void launchGame(Stage stage) {
         try{new SnakeGame().start(stage);}
-        catch (IOException e){}// start the JavaFX lifecycle
+        catch (IOException e){ System.out.println(e.getMessage());}// start the JavaFX lifecycle
     }
 }

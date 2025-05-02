@@ -3,6 +3,7 @@ package org.example.snakeblackjack;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
@@ -12,21 +13,19 @@ public class BlackJack extends Application {
 
     public static void launchGame(Stage stage) {
         try{new BlackJack().start(stage);}
-        catch (IOException e){}// start the JavaFX lifecycle
+        catch (IOException e){ System.out.println(e.getMessage());}// start the JavaFX lifecycle
     }
 
     @Override
     public void start(Stage stage) throws IOException {
 
-        Scene preScene = getPreScene();
+        Scene preScene = getPreScene(); // card drawing animation scene
         Scene gameScene = getGameScene();
+        /*
+        Image image = new Image("https://drive.google.com/uc?export=view&id=1xU9nFe8FyrNftQp4XvT5COUXCoKvDuBB");
+        stage.getIcons().add(image); */
 
-        /* commented out setting the icon code May.01.25
-        InputStream input = getClass().getResourceAsStream("/icon.png");
-        Image icon = new Image(input);
-
-        stage.getIcons().add(icon); */
-        stage.setTitle("Best Black Jack Game in the World");
+        stage.setTitle("Black Jack He He");
         stage.setWidth(800);
         stage.setHeight(600);
         stage.setResizable(false);
