@@ -68,6 +68,10 @@ public class SnakeGame extends Application {
              nodeTrail.addFirst(new Point2D(bodyPart.getX(), bodyPart.getY())); //store the init pos
          }
 
+         public Point2D getCurrentPosition(){
+             return new Point2D(bodyPart.getX(), bodyPart.getY());
+         }
+
          public void setPosition (Point2D position){
              bodyPart.setX(position.getX());
              bodyPart.setY(position.getY());
@@ -140,7 +144,7 @@ public class SnakeGame extends Application {
                 new KeyFrame(Duration.millis(20), e -> moveSnakeBody(headX, headY)),
                 new KeyFrame(Duration.millis(20), e -> checkFood(snakeHead, food, scene)), //score updated here
                 new KeyFrame(Duration.millis(20), e -> snakeWallCollision(snakeHead, stage)),
-                //new KeyFrame(Duration.millis(20), e -> snakeBodyCollision(snakeHead, stage)),
+                new KeyFrame(Duration.millis(20), e -> snakeBodyCollision(snakeHead, stage)),
                 new KeyFrame(Duration.millis(20), e -> updateScore(actualScore))
             );
             timeline.setCycleCount(Timeline.INDEFINITE);
@@ -219,25 +223,27 @@ public class SnakeGame extends Application {
 
     }
     public void snakeBodyCollision(Rectangle snakeHead, Stage stage) {
+
+         BodyPart nowChecking;
+         BodyPart snakeHeadBodyPart = snakeBody.getFirst();
          if(snakeBody.size() > 3) {
-             for (int i = 1; i < snakeBody.size(); i++) {
-                 BodyPart bodyPart = snakeBody.get(i);
+             for (int i = 2; i < snakeBody.size(); i++) {
+                 nowChecking = snakeBody.get(i);
 
-                 double disX = snakeHead.getX() - bodyPart.bodyPart.getX();
-                 double disY = snakeHead.getY() - bodyPart.bodyPart.getY();
-                 double distance = Math.sqrt(disX * disX + disY * disY);
-
-                 if (distance < 10) {
+                 if (nowChecking.getCurrentPosition().distance(snakeHeadBodyPart.getCurrentPosition()) > 50) {
+                     continue; //skip checking if the distance is too far away
+                 }
+                 if (nowChecking.bodyPart.getBoundsInParent().intersects(snakeHead.getBoundsInParent())) {
+                     timeline.stop();
                      gameOver(stage);
-                     break;
                  }
              }
          }
     }
 
     public void snakeWallCollision(Rectangle snakeHead, Stage stage) {
-        double buffer = 3; // Simulate stroke width
-
+        double buffer = 4; // Simulate stroke width
+        double rightBorderOffset = 3;
         //outer bounds of the snakeHead
         double headX = snakeHead.getX();
         double headY = snakeHead.getY();
@@ -252,9 +258,9 @@ public class SnakeGame extends Application {
 
         // Check if head is within the stroke area (3-pixel-wide band)
         boolean touchLeft = headX <= left + buffer && headX + headWidth >= left;
-        boolean touchRight = headX + headWidth >= right - buffer && headX <= right;
+        boolean touchRight = headX + headWidth >= right - buffer + rightBorderOffset;
         boolean touchTop = headY <= top + buffer && headY + headHeight >= top;
-        boolean touchBottom = headY + headHeight >= bottom - buffer && headY <= bottom;
+        boolean touchBottom = headY + headHeight >= bottom - buffer;
 
         if (touchLeft || touchRight || touchTop || touchBottom) {
             System.out.println("Collision with stroke only.");
@@ -282,20 +288,11 @@ public class SnakeGame extends Application {
         gameOverText.toFront();
     }
 
-    public void checkFood(Rectangle snakeHead, Rectangle food, Scene gameScene) { //pass in the current cord of the snakeHead
-        if (snakeHead.getBoundsInParent().intersects(food.getBoundsInParent())) {
-            double padding = 20;
-
-            // Scene dimensions
-            double sceneWidth = gameScene.getWidth();
-            double sceneHeight = gameScene.getHeight();
-
-            // Random generator
-            Random random = new Random();
-
-            // Random X and Y within the padded area
-            food.setX( padding + random.nextDouble() * (sceneWidth - 2 * padding));
-            food.setY( padding + random.nextDouble() * (sceneHeight - 2 * padding));
+    public void checkFood(Rectangle snakeHead, Rectangle currentFood, Scene gameScene) { //pass in the current cord of the snakeHead
+        if (snakeHead.getBoundsInParent().intersects(currentFood.getBoundsInParent())) {
+            Rectangle newFood = getNewFood(gameScene);
+            currentFood.setX(newFood.getX());
+            currentFood.setY(newFood.getY());
 
             //actions
             speed += SPEED_BONUS; //increment speed
@@ -375,6 +372,25 @@ public class SnakeGame extends Application {
 
         double randomX = minX + Math.random() * (maxX - minX);
         double randomY = minY + Math.random() * (maxY - minY);
+        BodyPart nowChecking;
+        int i = 1;
+        Point2D newFoodPos = new Point2D(randomX, randomY);
+
+        // avoiding the food to generate inside the body
+        while(i < snakeBody.size()) {
+            nowChecking = snakeBody.get(i);
+
+            if (nowChecking.getCurrentPosition().distance(newFoodPos) >= 45) {
+                i++;
+                continue; //skip checking if the distance is too far away
+            }
+            if (nowChecking.getCurrentPosition().distance(newFoodPos) < 45) {
+                i = 1; //recheck from the first body part
+                randomX = minX + Math.random() * (maxX - minX);
+                randomY = minY + Math.random() * (maxY - minY);
+                newFoodPos = new Point2D (randomX, randomY);
+            }
+        }
 
         Rectangle food = new Rectangle(randomX, randomY, rectWidth, rectHeight);
 
