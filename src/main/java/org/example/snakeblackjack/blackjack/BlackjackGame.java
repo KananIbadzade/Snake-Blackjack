@@ -1,10 +1,13 @@
 package org.example.snakeblackjack.blackjack;
 
 import javafx.scene.layout.GridPane;
+
 import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
+
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 /**
  * BlackjackGame -> game logic:
@@ -116,6 +119,33 @@ public class BlackjackGame {
         }
     }
 
+    //logic for render() method
+    private String getCardImageFileName(Card card) {
+        String rank = card.getRank(); // e.g., "2", "10", "King"
+        String suit = card.getSuit(); // e.g., "Spades", "Clubs"
+
+        // Convert full suit name to single letter
+        String suitLetter = switch (suit.toLowerCase()) {
+            case "spades" -> "S";
+            case "clubs" -> "C";
+            case "hearts" -> "H";
+            case "diamonds" -> "D";
+            default -> "";
+        };
+
+        // Convert rank to short form if needed
+        String shortRank = switch (rank.toLowerCase()) {
+            case "jack" -> "J";
+            case "queen" -> "Q";
+            case "king" -> "K";
+            case "ace" -> "A";
+            default -> rank; // numbers like "2", "3", ..., "10"
+        };
+
+        return shortRank + "-" + suitLetter + ".png";
+    }
+
+
     /**
      * Draw the current state into a GridPane.
      * (Will add Labels or ImageViews to show names, cards, and balances)
@@ -135,8 +165,12 @@ public class BlackjackGame {
             for (int col = 0; col < hand.size(); col++) {
                 Card c = hand.get(col);
                 // simply display “Rank of Suit”
-                Label cardLabel = new Label(c.getRank() + " of " + c.getSuit());
-                grid.add(cardLabel, col + 1, row);
+                String fileName = getCardImageFileName(c);
+                Image cardImg = new Image(getClass().getResourceAsStream("/images/cards/" + fileName));
+                ImageView cardView = new ImageView(cardImg);
+                cardView.setFitWidth(80);
+                cardView.setPreserveRatio(true);
+                grid.add(cardView, col + 1, row);
             }
 
             // 3) show the balance after the cards

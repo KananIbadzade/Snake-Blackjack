@@ -63,5 +63,10 @@ public class BlackjackController {
         tableGrid.getChildren().clear();
         BlackjackGame.getInstance().render(tableGrid);
     }
+
+    @FXML
+    public void initialize() {
+        refreshUI();  // this runs once after the scene is loaded
+    }
 }
 
