@@ -1,10 +1,9 @@
 package org.example.snakeblackjack.blackjack;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -12,8 +11,12 @@ import javafx.stage.Stage;
 import java.util.Optional;
 
 public class BlackjackController {
-    @FXML
-    private GridPane tableGrid;  // the grid where we show names, cards, balances
+    @FXML private GridPane tableGrid;
+    @FXML private Label turnLabel;
+    @FXML private Label roundLabel;
+    @FXML private Label statusLabel;
+    @FXML private Button hitButton;
+    @FXML private Button standButton;
 
     // user clicked the “Hit” button
     @FXML
@@ -25,7 +28,16 @@ public class BlackjackController {
     // user clicked the “Stand” button
     @FXML
     private void onStand() {
-        BlackjackGame.getInstance().stand();
+        BlackjackGame game = BlackjackGame.getInstance();
+        Player player = game.getPlayers().get(game.turnIndex);
+
+        if (player instanceof HumanPlayer && player.handValue() < 17) {
+            Alert alert = new Alert(Alert.AlertType.WARNING, "You must reach 17 or higher before standing!");
+            alert.showAndWait();
+            return;
+        }
+
+        game.stand();
         refreshUI();
     }
 
@@ -58,15 +70,42 @@ public class BlackjackController {
         stage.close();
     }
 
-    // clear the grid and ask the game to draw the current state again
+    // refresh game display and UI buttons
     private void refreshUI() {
+        BlackjackGame game = BlackjackGame.getInstance();
         tableGrid.getChildren().clear();
-        BlackjackGame.getInstance().render(tableGrid);
+        game.render(tableGrid);
+
+        turnLabel.setText("Turn: " + game.getPlayers().get(game.turnIndex).getName());
+        roundLabel.setText("Round: " + game.getRoundNumber());
+
+        boolean isPlayerTurn = game.getPlayers().get(game.turnIndex) instanceof HumanPlayer;
+        boolean roundOver = game.isRoundOver();
+        int handValue = game.getPlayers().get(game.turnIndex).handValue();
+
+        // Disable hit/stand based on rules
+        boolean allowActions = isPlayerTurn && !roundOver && handValue < 21;
+        hitButton.setDisable(!allowActions);
+        standButton.setDisable(!allowActions || handValue < 17);
+
+        // Highlight or blur disabled buttons (optional visual cue)
+        hitButton.setOpacity(hitButton.isDisable() ? 0.4 : 1.0);
+        standButton.setOpacity(standButton.isDisable() ? 0.4 : 1.0);
+
+        // Status message
+        String result = game.getLastRoundStatus();
+        statusLabel.setText(result == null ? "" : result);
     }
+
 
     @FXML
     public void initialize() {
-        refreshUI();  // this runs once after the scene is loaded
+        refreshUI();
+    }
+
+    @FXML
+    private void onNextRound() {
+        BlackjackGame.getInstance().startNewRound();
+        refreshUI();
     }
 }
-
