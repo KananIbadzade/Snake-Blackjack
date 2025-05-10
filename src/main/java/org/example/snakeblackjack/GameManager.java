@@ -15,16 +15,16 @@ public class GameManager extends Application {
         Stage snakeStage = new Stage();
         SnakeGame.launchGame(snakeStage);
 
+        //calling black jack game
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/blackjack.fxml"));
         Parent root = null;
         try {
             root = loader.load();
         }catch (Exception e){System.out.println(e.getMessage());}
 
-        Stage newStage = new Stage();
-        newStage.setScene(new Scene(root));
-        newStage.setTitle("Black Jack He He");
-        newStage.show();
+        blackJackStage.setScene(new Scene(root));
+        blackJackStage.setTitle("Black Jack He He");
+        blackJackStage.show();
 
 
     }
