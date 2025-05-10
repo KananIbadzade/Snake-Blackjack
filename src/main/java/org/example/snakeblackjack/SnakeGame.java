@@ -243,7 +243,7 @@ public class SnakeGame extends Application {
 
     public void snakeWallCollision(Rectangle snakeHead, Stage stage) {
         double buffer = 4; // Simulate stroke width
-        double rightBorderOffset = 3;
+
         //outer bounds of the snakeHead
         double headX = snakeHead.getX();
         double headY = snakeHead.getY();
@@ -258,7 +258,7 @@ public class SnakeGame extends Application {
 
         // Check if head is within the stroke area (3-pixel-wide band)
         boolean touchLeft = headX <= left + buffer && headX + headWidth >= left;
-        boolean touchRight = headX + headWidth >= right - buffer + rightBorderOffset;
+        boolean touchRight = headX + headWidth >= right - buffer + 1; //offset on the right boarder
         boolean touchTop = headY <= top + buffer && headY + headHeight >= top;
         boolean touchBottom = headY + headHeight >= bottom - buffer;
 
