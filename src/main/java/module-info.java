@@ -1,8 +1,9 @@
 module org.example.snakeblackjack {
     requires javafx.controls;
     requires javafx.fxml;
-    requires jdk.xml.dom;
 
-    opens org.example.snakeblackjack to javafx.fxml;  // Ensure FXML can access this package at runtime
-    exports org.example.snakeblackjack;  // Export the package to make it available for other modules
+    opens org.example.snakeblackjack to javafx.fxml;
+    opens org.example.snakeblackjack.blackjack to javafx.fxml;
+    exports org.example.snakeblackjack;
+    exports org.example.snakeblackjack.blackjack;
 }

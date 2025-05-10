@@ -243,7 +243,7 @@ public class SnakeGame extends Application {
 
     public void snakeWallCollision(Rectangle snakeHead, Stage stage) {
         double buffer = 4; // Simulate stroke width
-        double rightBorderOffset = 3;
+
         //outer bounds of the snakeHead
         double headX = snakeHead.getX();
         double headY = snakeHead.getY();
@@ -258,7 +258,7 @@ public class SnakeGame extends Application {
 
         // Check if head is within the stroke area (3-pixel-wide band)
         boolean touchLeft = headX <= left + buffer && headX + headWidth >= left;
-        boolean touchRight = headX + headWidth >= right - buffer + rightBorderOffset;
+        boolean touchRight = headX + headWidth >= right - buffer + 1; //offset on the right boarder
         boolean touchTop = headY <= top + buffer && headY + headHeight >= top;
         boolean touchBottom = headY + headHeight >= bottom - buffer;
 
@@ -496,8 +496,9 @@ public class SnakeGame extends Application {
         /* commented out setting the icon code May.01.25
         InputStream input = getClass().getResourceAsStream("/icon.png");
         Image icon = new Image(input);
+        Image image = new Image("https://drive.google.com/uc?export=view&id=1mnLEnbq6SLHUx_sIfNVAlQJK7Yc9f0zp");
 
-        stage.getIcons().add(icon); */
+        stage.getIcons().add(image);*/
         stage.setTitle("Best Snake Game in the World");
         stage.setWidth(800);
         stage.setHeight(600);
@@ -523,7 +524,8 @@ public class SnakeGame extends Application {
     }
 
 
-    public static void launchGame(String[] args) {
-        launch(args);  // start the JavaFX lifecycle
+    public static void launchGame(Stage stage) {
+        try{new SnakeGame().start(stage);}
+        catch (IOException e){ System.out.println(e.getMessage());}// start the JavaFX lifecycle
     }
 }
