@@ -1,12 +1,14 @@
 package org.example.snakeblackjack.blackjack;
 
 import javafx.scene.control.Label;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class BlackjackGame {
 
@@ -37,9 +39,16 @@ public class BlackjackGame {
         lastRoundStatus = "";
         roundOver = false;
 
-        for (Player p : players) {
+        for (int i = 0; i < players.size(); i++) {
+            Player p = players.get(i);
             p.clearHand();
-            p.placeBet(50);
+
+            if (i == 0) {
+                int bet = promptForBet(p);
+                p.placeBet(bet);
+            } else {
+                p.placeBet(50);
+            }
         }
 
         turnIndex = 0;
@@ -49,6 +58,22 @@ public class BlackjackGame {
                 p.take(deck.draw());
             }
         }
+    }
+
+    private int promptForBet(Player p) {
+        TextInputDialog betDialog = new TextInputDialog("50");
+        betDialog.setHeaderText("Enter your bet amount:");
+        betDialog.setContentText("Bet:");
+        Optional<String> result = betDialog.showAndWait();
+        if (result.isPresent()) {
+            try {
+                int entered = Integer.parseInt(result.get());
+                if (entered > 0 && entered <= p.getBalance()) {
+                    return entered;
+                }
+            } catch (NumberFormatException ignored) {}
+        }
+        return 50;
     }
 
     public void hit() {
@@ -93,28 +118,33 @@ public class BlackjackGame {
         for (int i = 0; i < 3; i++) {
             Player p = players.get(i);
             int val = p.handValue();
-            status.append(p.getName()).append(" (").append(val).append("): ");
+            int oldBalance = p.getBalance();
+            int bet = p.getCurrentBet();
 
             if (val > 21) {
                 p.loseBet();
-                status.append("busts!\n");
             } else if (val == 21 && p.getHand().size() == 2) {
-                int bonus = (int)(p.getCurrentBet() * 1.5);
-                p.balance += bonus + p.getCurrentBet();
+                int bonus = (int)(bet * 1.5);
+                p.balance += bonus + bet;
                 p.currentBet = 0;
-                status.append("Blackjack! Wins 1.5x!\n");
             } else if (dealerValue > 21) {
                 p.winBet();
-                status.append("wins! Dealer busts.\n");
             } else if (val > dealerValue) {
                 p.winBet();
-                status.append("beats dealer.\n");
             } else if (val == dealerValue) {
                 p.pushBet();
-                status.append("pushes (tie).\n");
             } else {
                 p.loseBet();
-                status.append("loses.\n");
+            }
+
+            int newBalance = p.getBalance();
+            status.append(p.getName()).append(" (Score: ").append(val).append(", Balance: $").append(newBalance).append(") - ");
+            if (newBalance > oldBalance) {
+                status.append("WINS\n");
+            } else if (newBalance < oldBalance) {
+                status.append("LOSES\n");
+            } else {
+                status.append("PUSHES (tie)\n");
             }
         }
 
