@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.snakeblackjack.LoginController"
+            prefHeight="400.0" prefWidth="600.0">
+
+    <children>
+        <VBox alignment="CENTER" spacing="15" layoutX="100" layoutY="60" prefWidth="400">
+            <HBox spacing="20" alignment="CENTER">
+                <ImageView fitWidth="120" fitHeight="120">
+                    <image>
+                        <Image url="@images/snakegamepicture.png" preserveRatio="true"/>
+                    </image>
+                </ImageView>
+                <ImageView fitWidth="120" fitHeight="120">
+                    <image>
+                        <Image url="@images/cardgame.png" preserveRatio="true"/>
+                    </image>
+                </ImageView>
+            </HBox>
+
+            <Label text="Welcome to the Games!" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+
+            <TextField fx:id="usernameField" promptText="Username" prefWidth="300"/>
+            <PasswordField fx:id="passwordField" promptText="Password" prefWidth="300"/>
+
+            <HBox spacing="15" alignment="CENTER">
+                <Button text="Log In" onAction="#handleLogin"/>
+                <Button text="Create Account" onAction="#handleCreateAccount"/>
+            </HBox>
+
+            <Label fx:id="statusLabel" textFill="red"/>
+        </VBox>
+    </children>
+</AnchorPane>
+
