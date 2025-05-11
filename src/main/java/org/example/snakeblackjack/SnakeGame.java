@@ -1,6 +1,9 @@
 // SnakeGame.java
 package org.example.snakeblackjack;
 
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -62,7 +65,10 @@ public class SnakeGame extends Application {
     private String currentUserName;
     private HighScoreManager scoreManager;
 
-     private static class BodyPart{
+    private MediaPlayer mediaPlayer;
+
+
+    private static class BodyPart{
          Deque<Point2D> nodeTrail = new ArrayDeque<>();
          Rectangle bodyPart;
 
@@ -127,6 +133,11 @@ public class SnakeGame extends Application {
 
         Scene scene = getGameScene();
         stage.setScene(scene);
+
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.play();
+        }
 
         inGame = true; // resume the game
         startGameLoop(stage); // this just starts the same AnimationTimer again
@@ -272,6 +283,9 @@ public class SnakeGame extends Application {
     }
 
     private void gameOver(Stage stage) {
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();  // stop music on game over
+        }
         timeline.stop();
         inGame = false;
 
@@ -530,6 +544,11 @@ public class SnakeGame extends Application {
             }
         });
 
+        String musicFile = "/audio/snakeMusic.mp3";
+        Media sound = new Media(getClass().getResource(musicFile).toExternalForm());
+        mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+        mediaPlayer.play();
 
         stage.show();
 
