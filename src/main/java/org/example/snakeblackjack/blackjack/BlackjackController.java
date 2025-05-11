@@ -10,6 +10,9 @@ import javafx.stage.Stage;
 
 import java.util.Optional;
 
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+
 /**
  * handles all user interactions and updates the UI
  * tied to the FXML layout with @FXML annotations.
@@ -22,10 +25,17 @@ public class BlackjackController {
     @FXML private Label roundLabel;
     @FXML private Button hitButton;
     @FXML private Button standButton;
+    private MediaPlayer mediaPlayer;
 
     // Called when the controller is initialized (auto-run by JavaFX)
     @FXML
     public void initialize() {
+        String musicFile = "/audio/casinoMusic.mp3"; // relative to resources/
+        Media sound = new Media(getClass().getResource(musicFile).toExternalForm());
+        mediaPlayer = new MediaPlayer(sound);
+        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // loop music
+        mediaPlayer.play();
+
         BlackjackGame game = BlackjackGame.getInstance();
         game.setOnRoundComplete(() -> refreshUI());
         refreshUI();
