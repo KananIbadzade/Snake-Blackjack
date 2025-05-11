@@ -194,7 +194,7 @@ public class BlackjackGame {
                     frontView.setPreserveRatio(true);
                     grid.add(frontView, 1, row);
 
-                    Image backImg = new Image(getClass().getResourceAsStream("/images/cards/BACK.png"));
+                    Image backImg = new Image(getClass().getResourceAsStream("/images/cards/00_BACK.png"));
                     ImageView backView = new ImageView(backImg);
                     backView.setFitWidth(80);
                     backView.setPreserveRatio(true);

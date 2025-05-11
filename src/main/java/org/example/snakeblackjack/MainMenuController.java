@@ -19,12 +19,12 @@ public class MainMenuController {
     @FXML
     private void launchSnake() throws Exception {
         Stage snakeStage = new Stage();
-        SnakeGame.launchGame(snakeStage);
-     }
+        //SnakeGame.launchGame(snakeStage);
+
 
         // Get the current stage
         Stage stage = (Stage) javafx.stage.Window.getWindows()
-                .filtered(w -> w.isShowing()).get(0);
+            .filtered(w -> w.isShowing()).get(0);
 
         // Create a SnakeGame instance
         SnakeGame game = new SnakeGame();
@@ -35,27 +35,29 @@ public class MainMenuController {
 
         // Start the game
         game.start(stage);
-
-
     }
 
-    @FXML
-    private void launchBlackjack() throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/blackjack.fxml"));
-        Stage stage = (Stage) javafx.stage.Window.getWindows()
-                .filtered(w -> w.isShowing()).get(0);
-        stage.setScene(new Scene(root));
-    }
 
-        @FXML
-    public void initialize() {
-        String username = LoginController.loggedInUserName;
-        if (username != null) {
-            welcomeLabel.setText("Welcome, " + username);
-            HighScoreManager scoreManager = new HighScoreManager();
-            snakeScoreLabel.setText("Snake High Score: " + scoreManager.getSnakeScore(username));
-            blackjackScoreLabel.setText("Blackjack High Score: " + scoreManager.getBlackjackScore(username));
-        }
+
+@FXML
+private void launchBlackjack() throws Exception {
+    Stage blackJackStage = FXMLLoader.load(getClass().getResource("/blackjack_Sean_version.fxml"));
+    /*
+    Stage stage = (Stage) javafx.stage.Window.getWindows()
+        .filtered(w -> w.isShowing()).get(0);
+    stage.setScene(new Scene(root)); */
+    blackJackStage.show();
+}
+
+@FXML
+public void initialize() {
+    String username = LoginController.loggedInUserName;
+    if (username != null) {
+        welcomeLabel.setText("Welcome, " + username);
+        HighScoreManager scoreManager = new HighScoreManager();
+        snakeScoreLabel.setText("Snake High Score: " + scoreManager.getSnakeScore(username));
+        blackjackScoreLabel.setText("Blackjack High Score: " + scoreManager.getBlackjackScore(username));
     }
+}
 
 }
