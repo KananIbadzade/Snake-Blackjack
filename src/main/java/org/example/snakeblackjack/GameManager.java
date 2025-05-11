@@ -13,7 +13,10 @@ public class GameManager extends Application {
     public void start(Stage primaryStage) {
         Stage blackJackStage = new Stage();
         Stage snakeStage = new Stage();
-        SnakeGame.launchGame(snakeStage);
+        String username = LoginController.loggedInUserName;
+        SnakeGame.launchGame(snakeStage, username);
+        //SnakeGame.launchGame(stage, currentUserName);
+
 
         //calling black jack game
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/snakeblackjack/blackjack.fxml"));
