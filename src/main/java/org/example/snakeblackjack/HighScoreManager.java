@@ -20,6 +20,7 @@ public class HighScoreManager {
         if (!file.exists()) {
             return;
         }
+        //reads file
         try (BufferedReader reader = new BufferedReader(new FileReader(FILE_NAME))){
             String line;
             while ((line = reader.readLine()) != null){
