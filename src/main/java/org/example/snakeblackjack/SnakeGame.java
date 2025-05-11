@@ -7,6 +7,7 @@ import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -14,19 +15,22 @@ import javafx.scene.effect.Glow;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
+import javafx.scene.control.Button;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.ListIterator;
-
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 
 public class SnakeGame extends Application {
     private static boolean inGame = false;
@@ -39,7 +43,7 @@ public class SnakeGame extends Application {
 
     //initial position of snakeHead
     private final double SNAKE_HEAD_INIT_X = 380;
-    private final double SNAKE_HEAD_INIT_Y = 250;
+    private final double SNAKE_HEAD_INIT_Y = 275;
 
     private static ArrayList<BodyPart> snakeBody = new ArrayList<>(); //keep track of the snake body
     private int score = 0;
@@ -132,9 +136,9 @@ public class SnakeGame extends Application {
 
     public void midGame(Stage stage, Scene scene) {
 
-        Rectangle snakeHead = (Rectangle)scene.getRoot().getChildrenUnmodifiable().get(0); //the snakehead
-        Rectangle food = (Rectangle)scene.getRoot().getChildrenUnmodifiable().get(2); //the food
-        Text actualScore = (Text)scene.getRoot().getChildrenUnmodifiable().get(3);
+        Rectangle snakeHead = (Rectangle)scene.getRoot().getChildrenUnmodifiable().get(1); //the snakehead
+        Rectangle food = (Rectangle)scene.getRoot().getChildrenUnmodifiable().get(3); //the food
+        Text actualScore = (Text)scene.getRoot().getChildrenUnmodifiable().get(4);
 
         // Create the timeline only once
         if (timeline == null) {
@@ -430,7 +434,65 @@ public class SnakeGame extends Application {
         Scene gameScene = new Scene(root, 800, 600);
         gameScene.setFill(Color.rgb(204,255,255)); //lightblue
 
-        wallBox = new Rectangle(8, 30, 770, 520);
+        MenuBar menuBar = new MenuBar();
+        menuBar.setPrefWidth(800);
+
+        // Game Menu
+        Menu gameMenu = new Menu("Game");
+        MenuItem pauseMenuItem = new MenuItem("Pause");
+        MenuItem restartMenuItem = new MenuItem("Restart");
+        MenuItem returnToMenu = new MenuItem("Return to Menu");
+
+        pauseMenuItem.setOnAction(e -> {
+            if (inGame) {
+                timeline.pause();
+                inGame = false;
+                pauseMenuItem.setText("Resume");
+            } else {
+                timeline.play();
+                inGame = true;
+                pauseMenuItem.setText("Pause");
+            }
+        });
+
+        restartMenuItem.setOnAction(e -> {
+            restartGame((Stage) gameScene.getWindow());
+        });
+
+        returnToMenu.setOnAction(e -> {
+            inGame = false;
+            if (timeline != null) timeline.stop();
+            Stage stage = (Stage) gameScene.getWindow();
+            Scene preScene = getPreScene();
+
+
+            preScene.setOnKeyPressed(event -> {
+                if (event.getCode() == KeyCode.SPACE) {
+                    event.consume();
+                    stage.setScene(gameScene);
+                    restartGame((Stage) gameScene.getWindow());
+                }
+            });
+
+            stage.setScene(preScene);
+        });
+
+        gameMenu.getItems().addAll(pauseMenuItem, restartMenuItem, returnToMenu);
+
+
+
+        menuBar.getMenus().addAll(gameMenu);
+
+        // Add the menu bar to the root
+        root.getChildren().add(menuBar);
+
+        // The rest of your existing game scene setup
+        // IMPORTANT: Adjust the Y positions of your game elements to avoid overlapping with the menu bar
+        double menuHeight = 25; // Approximate menu bar height
+
+        wallBox = new Rectangle(8, 30 + menuHeight, 770, 520 - menuHeight);
+
+        //wallBox = new Rectangle(8, 30, 770, 520);
         wallBox.setStroke(Color.web("231D2C"));
         wallBox.setStrokeWidth(3);
         Glow glow = new Glow();
@@ -442,23 +504,23 @@ public class SnakeGame extends Application {
         Text text = new Text();
         text.setText("Score: ");
         text.setX(8);
-        text.setY(20);
+        text.setY(45);
         text.setFont(Font.font(null, FontWeight.NORMAL, 20));
         text.setFill(Color.RED);
 
-        Text actualScore = new Text(75, 22, "0");
+        Text actualScore = new Text(75, 45, "0");
         actualScore.setFont(Font.font(null, FontWeight.NORMAL, 20));
         actualScore.setFill(Color.rgb(204,102,0)); //dark orange
 
 
-        getNewSnakeBodyPart(SNAKE_HEAD_INIT_X, SNAKE_HEAD_INIT_Y, root); //init the snakebody with the snake head
+        getNewSnakeBodyPart(SNAKE_HEAD_INIT_X, SNAKE_HEAD_INIT_Y + 25, root); //init the snakebody with the snake head
         //snake head is automatically added to the root
 
         Rectangle food = getNewFood(gameScene);
 
         gameOverText = new Text("GAME OVER");
         gameOverText.setX(250);  // depends on your scene width
-        gameOverText.setY(300);
+        gameOverText.setY(325);
         gameOverText.setFill(Color.RED);
         gameOverText.setFont(Font.font("Verdana", FontWeight.BOLD, 50));
         gameOverText.setVisible(false);
@@ -493,7 +555,6 @@ public class SnakeGame extends Application {
         return gameScene;
 
     }
-
 
     @Override
     public void start(Stage stage) throws IOException {
