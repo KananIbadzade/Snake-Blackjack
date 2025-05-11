@@ -41,12 +41,12 @@ public class MainMenuController {
 
 @FXML
 private void launchBlackjack() throws Exception {
-    Stage blackJackStage = FXMLLoader.load(getClass().getResource("/blackjack_Sean_version.fxml"));
-    /*
+    Parent root = FXMLLoader.load(getClass().getResource("/blackjack.fxml"));
+
     Stage stage = (Stage) javafx.stage.Window.getWindows()
         .filtered(w -> w.isShowing()).get(0);
-    stage.setScene(new Scene(root)); */
-    blackJackStage.show();
+    stage.setScene(new Scene(root));
+    stage.show();
 }
 
 @FXML
