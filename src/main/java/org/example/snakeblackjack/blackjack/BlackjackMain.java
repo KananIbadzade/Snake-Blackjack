@@ -9,9 +9,7 @@ import javafx.stage.Stage;
 public class BlackjackMain extends Application {
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(
-                getClass().getResource("/blackjack.fxml")
-        );
+        Parent root = FXMLLoader.load(getClass().getResource("/blackjack.fxml"));
         stage.setTitle("Blackjack");
         stage.setScene(new Scene(root));
         stage.setResizable(false);
