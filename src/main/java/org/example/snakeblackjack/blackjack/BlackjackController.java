@@ -1,6 +1,9 @@
 package org.example.snakeblackjack.blackjack;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -27,6 +30,11 @@ public class BlackjackController {
     @FXML private Button standButton;
     private MediaPlayer mediaPlayer;
 
+    private Stage stage;
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
     // Called when the controller is initialized (auto-run by JavaFX)
     @FXML
     public void initialize() {
@@ -94,7 +102,17 @@ public class BlackjackController {
     @FXML
     private void backToMainMenu() {
         Stage stage = (Stage) tableGrid.getScene().getWindow();
+        mediaPlayer.stop();
         stage.close();
+        Parent root = null;
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/mainmenu.fxml"));
+            root = loader.load();
+        }catch (Exception e) { System.out.println("Error loading main menu");}
+        stage.setTitle("MainMenu");
+        this.stage.setScene(new Scene(root));
+        this.stage.setResizable(false);
+        this.stage.show();
     }
 
     // "Next Round" button is clicked

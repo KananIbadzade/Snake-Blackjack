@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import org.example.snakeblackjack.blackjack.BlackjackController;
 
 public class MainMenuController {
 
@@ -41,10 +42,12 @@ public class MainMenuController {
 
 @FXML
 private void launchBlackjack() throws Exception {
-    Parent root = FXMLLoader.load(getClass().getResource("/blackjack.fxml"));
-
     Stage stage = (Stage) javafx.stage.Window.getWindows()
         .filtered(w -> w.isShowing()).get(0);
+    FXMLLoader loader = new FXMLLoader(getClass().getResource("/blackjack.fxml"));
+    Parent root = loader.load();
+    BlackjackController controller = loader.getController();
+    controller.setStage(stage);
     stage.setScene(new Scene(root));
     stage.show();
 }
