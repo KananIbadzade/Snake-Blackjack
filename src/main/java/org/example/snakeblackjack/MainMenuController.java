@@ -7,6 +7,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import org.example.snakeblackjack.blackjack.BlackjackController;
+import javafx.scene.control.TextArea;
+
+import java.awt.*;
+import java.util.Map;
+import java.util.List;
 
 public class MainMenuController {
 
@@ -16,6 +21,11 @@ public class MainMenuController {
     private Label snakeScoreLabel;
     @FXML
     private Label blackjackScoreLabel;
+    @FXML
+    private Label topScoresLabel;
+    @FXML
+    private TextArea topScoresArea;
+
 
     @FXML
     private void launchSnake() throws Exception {
@@ -58,8 +68,23 @@ public void initialize() {
     if (username != null) {
         welcomeLabel.setText("Welcome, " + username);
         HighScoreManager scoreManager = new HighScoreManager();
+
+
+
+        scoreManager.defaultScoresForUsers(username);
+
         snakeScoreLabel.setText("Snake High Score: " + scoreManager.getSnakeScore(username));
         blackjackScoreLabel.setText("Blackjack High Score: " + scoreManager.getBlackjackScore(username));
+
+        List<Map.Entry<String, Integer>> top5 = scoreManager.getTop5SnakeScores();
+        StringBuilder sb = new StringBuilder("🏆 Top 5 Snake Scores:\n");
+        int rank = 1;
+        for (Map.Entry<String, Integer> entry : top5) {
+            sb.append(rank++).append(". ")
+                    .append(entry.getKey()).append(" - ")
+                    .append(entry.getValue()).append("\n");
+        }
+        topScoresArea.setText(sb.toString());
     }
 }
 

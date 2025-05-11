@@ -291,9 +291,12 @@ public class SnakeGame extends Application {
 
         if (scoreManager != null && currentUserName != null) {
             int oldScore = scoreManager.getSnakeScore(currentUserName);
-            if (score > oldScore) {
+            System.out.println("OLD SCORE: " + oldScore);
+            System.out.println("NEW SCORE: " + score);
+
+            if (oldScore == 1000 || score > oldScore) {
                 scoreManager.updateSnakeScore(currentUserName, score);
-                System.out.println(" Snake high score updated for " + currentUserName + ": " + score);
+                System.out.println("Snake score updated to: " + score);
             }
         }
 
