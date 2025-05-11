@@ -8,7 +8,7 @@ import java.util.List;
  */
 
 public abstract class Player {
-    protected final String name;
+    protected String name = "";
 
     // cards in the player’s hand
     protected final List<Card> hand = new ArrayList<>();
@@ -17,10 +17,12 @@ public abstract class Player {
     protected int balance    = 1000;
     protected int currentBet = 0;
 
-
-    public Player(String name) {
+    //protected constructor
+    protected Player(String name) {
         this.name = name;
     }
+
+
 
 
     public int getBalance() {
