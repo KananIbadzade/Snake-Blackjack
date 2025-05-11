@@ -10,38 +10,54 @@ import javafx.stage.Stage;
 
 import java.util.Optional;
 
+/**
+ * handles all user interactions and updates the UI
+ * tied to the FXML layout with @FXML annotations.
+ */
 public class BlackjackController {
+
+    // FXML UI elements (linked by ID from the .fxml file)
     @FXML private GridPane tableGrid;
     @FXML private Label turnLabel;
     @FXML private Label roundLabel;
-    @FXML private Label statusLabel;
     @FXML private Button hitButton;
     @FXML private Button standButton;
 
-    // user clicked the “Hit” button
+    // Called when the controller is initialized (auto-run by JavaFX)
+    @FXML
+    public void initialize() {
+        BlackjackGame game = BlackjackGame.getInstance();
+        game.setOnRoundComplete(() -> refreshUI());
+        refreshUI();
+    }
+
+    // "Hit" button is clicked
     @FXML
     private void onHit() {
+        if (hitButton.isDisabled()) return;
         BlackjackGame.getInstance().hit();
         refreshUI();
     }
 
-    // user clicked the “Stand” button
+    // "Stand" button is clicked.
     @FXML
     private void onStand() {
+        if (standButton.isDisabled()) return;
+
         BlackjackGame game = BlackjackGame.getInstance();
         Player player = game.getPlayers().get(game.turnIndex);
 
+        // stand if < 17
         if (player instanceof HumanPlayer && player.handValue() < 17) {
             Alert alert = new Alert(Alert.AlertType.WARNING, "You must reach 17 or higher before standing!");
             alert.showAndWait();
             return;
         }
-
         game.stand();
         refreshUI();
     }
 
-    // user clicked “Save” → show a dialog with the save string to copy
+    // "Save" button is clicked
     @FXML
     private void onSaveState() {
         String save = BlackjackGame.getInstance().getSaveString();
@@ -50,62 +66,67 @@ public class BlackjackController {
         alert.showAndWait();
     }
 
-    // user clicked “Load” → prompt for a save string, then reload
+    // "Load" button is clicked
     @FXML
     private void onLoadState() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setHeaderText("Paste your save string here:");
         dialog.setContentText("Save data:");
         Optional<String> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            BlackjackGame.getInstance().loadFromString(result.get());
+
+        result.ifPresent(saveString -> {
+            BlackjackGame.getInstance().loadFromString(saveString);
             refreshUI();
-        }
+        });
     }
 
-    // user clicked “Main Menu” → just close this window
+    // "Main Menu" button is clicked
     @FXML
     private void backToMainMenu() {
         Stage stage = (Stage) tableGrid.getScene().getWindow();
         stage.close();
     }
 
-    // refresh game display and UI buttons
-    private void refreshUI() {
-        BlackjackGame game = BlackjackGame.getInstance();
-        tableGrid.getChildren().clear();
-        game.render(tableGrid);
-
-        turnLabel.setText("Turn: " + game.getPlayers().get(game.turnIndex).getName());
-        roundLabel.setText("Round: " + game.getRoundNumber());
-
-        boolean isPlayerTurn = game.getPlayers().get(game.turnIndex) instanceof HumanPlayer;
-        boolean roundOver = game.isRoundOver();
-        int handValue = game.getPlayers().get(game.turnIndex).handValue();
-
-        // Disable hit/stand based on rules
-        boolean allowActions = isPlayerTurn && !roundOver && handValue < 21;
-        hitButton.setDisable(!allowActions);
-        standButton.setDisable(!allowActions || handValue < 17);
-
-        // Highlight or blur disabled buttons (optional visual cue)
-        hitButton.setOpacity(hitButton.isDisable() ? 0.4 : 1.0);
-        standButton.setOpacity(standButton.isDisable() ? 0.4 : 1.0);
-
-        // Status message
-        String result = game.getLastRoundStatus();
-        statusLabel.setText(result == null ? "" : result);
-    }
-
-
-    @FXML
-    public void initialize() {
-        refreshUI();
-    }
-
+    // "Next Round" button is clicked
     @FXML
     private void onNextRound() {
         BlackjackGame.getInstance().startNewRound();
         refreshUI();
+    }
+
+    // updates the screen: cards, turn, round number, and button states
+    private void refreshUI() {
+        BlackjackGame game = BlackjackGame.getInstance();
+
+        tableGrid.getChildren().clear();
+        game.render(tableGrid);
+
+        boolean isRoundOver = game.isRoundOver();
+
+        // whose turn it is
+        int currentTurn = game.turnIndex;
+        boolean isHumanTurn = currentTurn < game.getPlayers().size() && game.getPlayers().get(currentTurn) instanceof HumanPlayer;
+
+        // get hand value only if it's the human's turn
+        int playerHandValue = isHumanTurn ? game.getPlayers().get(currentTurn).handValue() : 0;
+
+        // updating the labels showing whose turn and which round
+        if (isHumanTurn) {
+            turnLabel.setText("Turn: " + game.getPlayers().get(currentTurn).getName());
+        } else {
+            turnLabel.setText("Turn: —");
+        }
+        roundLabel.setText("Round: " + game.getRoundNumber());
+
+        // when player is allowed to click buttons
+        boolean canAct = isHumanTurn && !isRoundOver && playerHandValue < 21;
+
+        // enable/disable buttons
+        hitButton.setDisable(isRoundOver || !canAct);
+        standButton.setDisable(isRoundOver || !canAct || playerHandValue < 17);
+
+        // fading buttons if disabled
+        hitButton.setOpacity(hitButton.isDisable() ? 0.4 : 1.0);
+        standButton.setOpacity(standButton.isDisable() ? 0.4 : 1.0);
     }
 }
