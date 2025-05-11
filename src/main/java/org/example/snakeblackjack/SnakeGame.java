@@ -59,6 +59,9 @@ public class SnakeGame extends Application {
     private Timeline timeline;
     private AnimationTimer gameLoop;
 
+    private String currentUserName;
+    private HighScoreManager scoreManager;
+
      private static class BodyPart{
          Deque<Point2D> nodeTrail = new ArrayDeque<>();
          Rectangle bodyPart;
@@ -271,6 +274,15 @@ public class SnakeGame extends Application {
     private void gameOver(Stage stage) {
         timeline.stop();
         inGame = false;
+
+        if (scoreManager != null && currentUserName != null) {
+            int oldScore = scoreManager.getSnakeScore(currentUserName);
+            if (score > oldScore) {
+                scoreManager.updateSnakeScore(currentUserName, score);
+                System.out.println(" Snake high score updated for " + currentUserName + ": " + score);
+            }
+        }
+
         double textWidth = gameOverText.getLayoutBounds().getWidth();
         double textHeight = gameOverText.getLayoutBounds().getHeight();
         double rectCenterX = wallBox.getX() + wallBox.getWidth() / 2;
@@ -524,8 +536,33 @@ public class SnakeGame extends Application {
     }
 
 
-    public static void launchGame(Stage stage) {
-        try{new SnakeGame().start(stage);}
-        catch (IOException e){ System.out.println(e.getMessage());}// start the JavaFX lifecycle
+//    public static void launchGame(Stage stage) {
+//        try{new SnakeGame().start(stage);}
+//        catch (IOException e){ System.out.println(e.getMessage());}// start the JavaFX lifecycle
+//    }
+
+    public void setUsername(String username) {
+        this.currentUserName = username;
     }
+
+    public void setScoreManager(HighScoreManager manager) {
+            this.scoreManager = manager;
+        }
+
+    public static void launchGame(Stage stage, String username) {
+            try {
+                SnakeGame game = new SnakeGame();
+                HighScoreManager manager = new HighScoreManager();
+                //manager.defaultScoresForUsers(username);
+                game.setUsername(username);
+                game.setScoreManager(new HighScoreManager());
+                game.start(stage);
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
+
+}
+
+
+
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.geometry.Insets?>
+<?import javafx.geometry.Pos?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ToolBar?>
@@ -12,6 +13,7 @@
             fx:controller="org.example.snakeblackjack.blackjack.BlackjackController"
             prefWidth="800" prefHeight="600">
 
+    <!-- Top toolbar with a back-to-menu button -->
     <top>
         <VBox spacing="5" style="-fx-background-color: #2e8b57;" alignment="CENTER_LEFT">
             <ToolBar>
@@ -30,6 +32,7 @@
         </VBox>
     </top>
 
+    <!-- Center area for showing cards/panels -->
     <center>
         <GridPane fx:id="tableGrid"
                   hgap="10" vgap="10"
@@ -40,6 +43,8 @@
         </GridPane>
     </center>
 
+
+    <!-- Bottom controls for the player -->
     <bottom>
         <VBox spacing="10">
             <padding>
