@@ -10,9 +10,9 @@ public class MainMenuController {
 
     @FXML
     private void launchSnake() throws Exception {
-        // reuse your existing SnakeGame
-        new SnakeGame().start((Stage) /* get any node’s stage */ javafx.stage.Window.getWindows().filtered(w -> w.isShowing()).get(0));
-    }
+        Stage snakeStage = new Stage();
+        SnakeGame.launchGame(snakeStage);
+     }
 
     @FXML
     private void launchBlackjack() throws Exception {
