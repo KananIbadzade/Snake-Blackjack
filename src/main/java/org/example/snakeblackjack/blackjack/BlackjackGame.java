@@ -1,40 +1,37 @@
 package org.example.snakeblackjack.blackjack;
 
-import javafx.scene.layout.GridPane;
-
-import java.util.ArrayList;
-import java.util.List;
 import javafx.scene.control.Label;
-
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.control.Alert;
 
-/**
- * BlackjackGame -> game logic:
- *  -deals cards,
- *  -tracks whose turn it is,
- *  -handles hit/stand actions,
- *  -settles bets at the end of each round,
- *  -can render the state into a GridPane,
- *  -and can save or load its entire state via strings.
- */
+import java.util.*;
+
 public class BlackjackGame {
 
-    // singleton instance so everyone uses the same game
+    // Singleton pattern: only one instance of the game
     private static final BlackjackGame INSTANCE = new BlackjackGame();
-    public static BlackjackGame getInstance() {
-        return INSTANCE;
-    }
+    public static BlackjackGame getInstance() { return INSTANCE; }
 
     private final Deck deck = new Deck();
-
-    // list of the 4 players: Player, Bot A, Bot B, Dealer
     private final List<Player> players = new ArrayList<>();
 
-    // which player’s turn it is (0 = User, 1 = Bot A, 2 = Bot B, 3 = Dealer)
-    int turnIndex = 0;
+    public int turnIndex = 0;
+    private int roundNumber = 0;
+    private boolean roundOver = false;
+    private String lastRoundStatus = "";
 
-    // private constructor sets up players and starts round 1
+    private final Map<Player, String> roundResults = new HashMap<>();
+    private Runnable onRoundComplete;   // callback to update the UI
+
+    // refreshes screen after each round
+    public void setOnRoundComplete(Runnable callback) {
+        this.onRoundComplete = callback;
+    }
+
+    // private constructor initializes players
     private BlackjackGame() {
         players.add(new HumanPlayer("You"));
         players.add(new AutoPlayer("Bot A", 16));
@@ -43,88 +40,183 @@ public class BlackjackGame {
         startNewRound();
     }
 
-
     public List<Player> getPlayers() {
         return players;
     }
 
-
+    // checks balance, asks for bet, deals cards, etc
     public void startNewRound() {
-        deck.shuffle();
-
-        for (Player p : players) {
-            p.clearHand();
-            p.placeBet(50);
+        // show alert if you are broke
+        if (players.get(0).getBalance() <= 0) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Game Over");
+            alert.setHeaderText("You're out of money!");
+            alert.setContentText("Your balance is $0. The game is over.");
+            alert.showAndWait();
+            return;
         }
 
-        // start with player #0
-        turnIndex = 0;
+        // reset deck if deck is running low
+        if (deck.size() < 20) {
+            deck.reset();
+        }
 
-        // deal two cards to everyone
+        deck.shuffle();
+        roundNumber++;
+        roundOver = false;
+        lastRoundStatus = "";
+        roundResults.clear();
+
+        // clear hands and place bets
+        for (int i = 0; i < players.size(); i++) {
+            Player p = players.get(i);
+            p.clearHand();
+
+            if (i == 0) {
+                // User: ask for a valid bet
+                int bet = 0;
+                do {
+                    bet = promptForBet(p);
+                    if (bet <= 0 || bet > p.getBalance()) {
+                        Alert invalid = new Alert(Alert.AlertType.WARNING);
+                        invalid.setTitle("Invalid Bet");
+                        invalid.setHeaderText("Please enter a valid bet.");
+                        invalid.setContentText("Bet must be greater than 0 and not exceed your balance.");
+                        invalid.showAndWait();
+                    }
+                } while (bet <= 0 || bet > p.getBalance());
+
+                p.placeBet(bet);
+            } else {
+                // Bots bet $50 by default
+                p.placeBet(50);
+            }
+        }
+
+        // Deal 2 cards to each player
+        turnIndex = 0;
         for (int i = 0; i < 2; i++) {
             for (Player p : players) {
                 p.take(deck.draw());
             }
         }
+
+        // if player has Blackjack
+        Player player = players.get(0);
+        if (player.hasBlackjack()) {
+            turnIndex = players.size(); // Skip to round end
+            settleAllBets();
+            roundOver = true;
+            if (onRoundComplete != null) onRoundComplete.run();
+        }
     }
 
-    // called when the human player clicks “Hit”
+    // dialog for bet input
+    private int promptForBet(Player p) {
+        while (true) {
+            TextInputDialog betDialog = new TextInputDialog("50");
+            betDialog.setHeaderText("Enter your bet amount:");
+            betDialog.setContentText("Bet (must be > 0 and ≤ $" + p.getBalance() + "):");
+
+            Optional<String> result = betDialog.showAndWait();
+            if (result.isEmpty()) System.exit(0);  // Exit if user cancels
+
+            try {
+                int entered = Integer.parseInt(result.get().trim());
+                if (entered > 0 && entered <= p.getBalance()) {
+                    return entered;
+                }
+            } catch (NumberFormatException ignored) {}
+
+            Alert invalid = new Alert(Alert.AlertType.WARNING);
+            invalid.setTitle("Invalid Bet");
+            invalid.setHeaderText("Invalid input!");
+            invalid.setContentText("You must enter a number > 0 and not more than your balance.");
+            invalid.showAndWait();
+        }
+    }
+
+    // adds card to current player
     public void hit() {
         Player p = players.get(turnIndex);
         p.take(deck.draw());
-        // if they bust, move on immediately
-        if (p.handValue() > 21) {
+        if (p.handValue() >= 21 || p.hasBlackjack()) {
             nextTurn();
         }
     }
 
-    // called when the human player clicks “Stand”
+    // ends current player’s turn
     public void stand() {
         nextTurn();
     }
 
-    // move to the next player (or settle and reset if we’ve gone past the dealer)
+    // moves to the next player's turn
     private void nextTurn() {
         turnIndex++;
+
+        while (turnIndex < players.size()) {
+            Player current = players.get(turnIndex);
+
+            if (!(current instanceof HumanPlayer)) {
+                while (current.wantsToHit()) {
+                    current.take(deck.draw());
+                    if (current.handValue() >= 21) break;
+                }
+                turnIndex++;
+            } else {
+                break;
+            }
+        }
+
+        // if all are done, settles bets
         if (turnIndex >= players.size()) {
             settleAllBets();
-            startNewRound();
+            roundOver = true;
+            if (onRoundComplete != null) onRoundComplete.run();
         }
     }
 
-    // compare each non-dealer to dealer and pay out or collect bets
+    // determines win/loss/push
     private void settleAllBets() {
         int dealerValue = players.get(3).handValue();
+        StringBuilder status = new StringBuilder("Round Results:\n");
+        status.append("Dealer: ").append(dealerValue).append("\n\n");
 
-        // for each of the first 3 players
         for (int i = 0; i < 3; i++) {
             Player p = players.get(i);
             int val = p.handValue();
 
             if (val > 21) {
-                p.loseBet();       // bust => lose
+                p.loseBet();
+                roundResults.put(p, "LOSES");
+            } else if (p.hasBlackjack()) {
+                p.blackjackWin();
+                roundResults.put(p, "BLACKJACK");
+            } else if (dealerValue > 21 || val > dealerValue) {
+                p.winBet();
+                roundResults.put(p, "WINS");
+            } else if (val == dealerValue) {
+                p.pushBet();
+                roundResults.put(p, "PUSHES (tie)");
+            } else {
+                p.loseBet();
+                roundResults.put(p, "LOSES");
             }
-            else if (dealerValue > 21) {
-                p.winBet();        // dealer busts => win
-            }
-            else if (val > dealerValue) {
-                p.winBet();        // higher than dealer => win
-            }
-            else if (val == dealerValue) {
-                p.pushBet();       // tie => push
-            }
-            else {
-                p.loseBet();       // lower => lose
-            }
+
+            status.append(p.getName()).append(": ")
+                    .append(roundResults.get(p))
+                    .append(" | Balance: $").append(p.getBalance())
+                    .append("\n");
         }
+
+        lastRoundStatus = status.toString();
     }
 
-    //logic for render() method
+    // gets the card image filename based on its rank and suit
     private String getCardImageFileName(Card card) {
-        String rank = card.getRank(); // e.g., "2", "10", "King"
-        String suit = card.getSuit(); // e.g., "Spades", "Clubs"
+        String rank = card.getRank();
+        String suit = card.getSuit();
 
-        // Convert full suit name to single letter
         String suitLetter = switch (suit.toLowerCase()) {
             case "spades" -> "S";
             case "clubs" -> "C";
@@ -133,59 +225,84 @@ public class BlackjackGame {
             default -> "";
         };
 
-        // Convert rank to short form if needed
         String shortRank = switch (rank.toLowerCase()) {
             case "jack" -> "J";
             case "queen" -> "Q";
             case "king" -> "K";
             case "ace" -> "A";
-            default -> rank; // numbers like "2", "3", ..., "10"
+            default -> rank;
         };
 
         return shortRank + "-" + suitLetter + ".png";
     }
 
-
-    /**
-     * Draw the current state into a GridPane.
-     * (Will add Labels or ImageViews to show names, cards, and balances)
-     */
+    // draws the cards and balances on the screen
     public void render(GridPane grid) {
         grid.getChildren().clear();
 
         for (int row = 0; row < players.size(); row++) {
             Player p = players.get(row);
 
-            // 1) show the player’s name in column 0
+            // Show player name
             Label nameLabel = new Label(p.getName());
+            nameLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: white;");
             grid.add(nameLabel, 0, row);
 
-            // 2) show each card next to the name
             List<Card> hand = p.getHand();
-            for (int col = 0; col < hand.size(); col++) {
-                Card c = hand.get(col);
-                // simply display “Rank of Suit”
-                String fileName = getCardImageFileName(c);
-                Image cardImg = new Image(getClass().getResourceAsStream("/images/cards/" + fileName));
-                ImageView cardView = new ImageView(cardImg);
-                cardView.setFitWidth(80);
-                cardView.setPreserveRatio(true);
-                grid.add(cardView, col + 1, row);
+
+            // hide dealer's second card if round not finished
+            if (row == 3 && !roundOver) {
+                if (hand.size() > 1) {
+                    addCardToGrid(grid, hand.get(0), 1, row);  // visible card
+                    addCardBack(grid, 2, row);                 // hidden card
+                }
+            } else {
+                for (int col = 0; col < hand.size(); col++) {
+                    addCardToGrid(grid, hand.get(col), col + 1, row);
+                }
             }
 
-            // 3) show the balance after the cards
-            Label balanceLabel = new Label("$" + p.getBalance());
-            // put it two columns after the last card
-            grid.add(balanceLabel, hand.size() + 1, row);
+            // showing balance + result
+            if (row != 3) {
+                String result = roundOver && roundResults.containsKey(p) ? " - " + roundResults.get(p) : "";
+                Label balanceLabel = new Label("$" + p.getBalance() + result);
+                String color = p.getBalance() > 0 ? "limegreen" : "red";
+                balanceLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: " + color + ";");
+                grid.add(balanceLabel, hand.size() + 2, row);
+            }
         }
     }
 
-    // hand off to the manager to produce a save string
+    // adds face-up card image to the grid
+    private void addCardToGrid(GridPane grid, Card card, int col, int row) {
+        String fileName = getCardImageFileName(card);
+        Image img = new Image(getClass().getResourceAsStream("/images/cards/" + fileName));
+        ImageView cardView = new ImageView(img);
+        cardView.setFitWidth(80);
+        cardView.setPreserveRatio(true);
+        grid.add(cardView, col, row);
+    }
+
+    // adds face-down (hidden) card
+    private void addCardBack(GridPane grid, int col, int row) {
+        Image backImg = new Image(getClass().getResourceAsStream("/images/cards/BACK.png"));
+        ImageView backView = new ImageView(backImg);
+        backView.setFitWidth(80);
+        backView.setPreserveRatio(true);
+        grid.add(backView, col, row);
+    }
+
+    // Getters for other classes to access
+    public int getRoundNumber() { return roundNumber; }
+
+//    public String getLastRoundStatus() { return lastRoundStatus; }  // not used/needed
+
+    public boolean isRoundOver() { return roundOver; }
+
     public String getSaveString() {
         return BlackJackManager.saveState(this);
     }
 
-    // hand off to the manager to restore from a save string
     public void loadFromString(String state) {
         BlackJackManager.loadState(this, state);
     }
