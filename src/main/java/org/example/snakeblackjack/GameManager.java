@@ -19,7 +19,7 @@ public class GameManager extends Application {
 
 
         //calling black jack game
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/example/snakeblackjack/blackjack.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/blackjack.fxml"));
         Parent root = null;
         try {
             root = loader.load();
