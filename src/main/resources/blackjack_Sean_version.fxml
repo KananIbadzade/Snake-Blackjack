@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Scene?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.effect.ColorAdjust?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.effect.Glow?>
+<?import javafx.scene.effect.InnerShadow?>
+<?import javafx.scene.effect.Light.Distant?>
+<?import javafx.scene.effect.Lighting?>
+<?import javafx.scene.effect.Shadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.paint.LinearGradient?>
+<?import javafx.scene.paint.RadialGradient?>
+<?import javafx.scene.paint.Stop?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+
+<AnchorPane  xmlns="http://javafx.com/javafx/8.0.171"
+             xmlns:fx="http://javafx.com/fxml/1"
+             fx:controller="org.example.snakeblackjack.blackjack.BlackjackController_Sean"
+             fx:id="root" prefHeight="669.0" prefWidth="729.0" style="-fx-background-color: #2e8b57;">
+<children>
+   <ImageView fx:id="initCardWe2" fitHeight="129.0" fitWidth="91.0" layoutX="231.0" layoutY="526.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+         <Image url="@images/cards/00_BACK.png" />
+      </image>
+      <effect>
+         <DropShadow blurType="TWO_PASS_BOX" height="25.48" radius="11.4925" spread="0.02" width="22.49" />
+      </effect>
+   </ImageView>
+   <Pane fx:id="coinPilesPane" layoutX="239.0" layoutY="227.0" prefHeight="215.0" prefWidth="251.0">
+      <children>
+         <ImageView fx:id="coinPile6" fitHeight="107.0" fitWidth="107.0" layoutX="57.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+               <Image url="@images/pile_of_gold_cois.png" />
+            </image>
+         </ImageView>
+         <ImageView fx:id="coinPile4" fitHeight="107.0" fitWidth="107.0" layoutX="28.0" layoutY="54.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+               <Image url="@images/pile_of_gold_cois.png" />
+            </image>
+            <effect>
+               <ColorAdjust brightness="0.18" contrast="0.37" hue="0.02" saturation="0.35" />
+            </effect>
+         </ImageView>
+         <ImageView fx:id="coinPile7" fitHeight="107.0" fitWidth="107.0" layoutX="131.0" layoutY="21.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+               <Image url="@images/pile_of_gold_cois.png" />
+            </image>
+            <effect>
+               <Glow level="0.32" />
+            </effect>
+         </ImageView>
+         <ImageView fx:id="coinPile2" fitHeight="107.0" fitWidth="107.0" layoutX="93.0" layoutY="42.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+               <Image url="@images/pile_of_gold_cois.png" />
+            </image>
+            <effect>
+               <Glow level="0.46" />
+            </effect>
+         </ImageView>
+         <ImageView fx:id="coinPile5" fitHeight="107.0" fitWidth="107.0" layoutX="152.0" layoutY="43.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+               <Image url="@images/pile_of_gold_cois.png" />
+            </image>
+            <effect>
+               <ColorAdjust brightness="0.22" contrast="0.09" hue="-0.04" saturation="0.46" />
+            </effect>
+         </ImageView>
+         <ImageView fx:id="coinPile3" fitHeight="107.0" fitWidth="107.0" layoutX="123.0" layoutY="86.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+               <Image url="@images/pile_of_gold_cois.png" />
+            </image>
+         </ImageView>
+         <ImageView fx:id="coinPile1" fitHeight="107.0" fitWidth="107.0" layoutX="57.0" layoutY="96.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+               <Image url="@images/pile_of_gold_cois.png" />
+            </image>
+            <effect>
+               <Glow level="0.74" />
+            </effect>
+         </ImageView>
+      </children>
+   </Pane>
+   <Pane fx:id="valuePaneWe" layoutX="355.0" layoutY="526.0" prefHeight="130.0" prefWidth="147.0">
+      <children>
+         <Rectangle fx:id="valueWe" arcHeight="5.0" arcWidth="5.0" fill="#e5000000" height="88.0" layoutX="3.0" layoutY="37.0" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeType="OUTSIDE" strokeWidth="2.0" width="147.0">
+            <stroke>
+               <RadialGradient centerX="0.5" centerY="0.5" radius="1.0">
+                  <stops>
+                     <Stop>
+                        <color>
+                           <Color />
+                        </color>
+                     </Stop>
+                     <Stop offset="1.0">
+                        <color>
+                           <Color red="1.0" green="1.0" blue="1.0" />
+                        </color>
+                     </Stop>
+                  </stops>
+               </RadialGradient>
+            </stroke>
+            <effect>
+               <Glow level="1.0" />
+            </effect>
+         </Rectangle>
+         <Label layoutX="11.0" layoutY="51.0" text="Funds: ">
+            <font>
+               <Font name="System Italic" size="16.0" />
+            </font>
+         </Label>
+         <Label layoutX="11.0" layoutY="86.0" text="Bet: ">
+            <font>
+               <Font name="System Italic" size="16.0" />
+            </font>
+         </Label>
+         <Label fx:id="fundValueWe" layoutX="60.0" layoutY="51.0" prefHeight="25.0" prefWidth="87.0" text="\$">
+            <font>
+               <Font name="System Bold Italic" size="16.0" />
+            </font>
+         </Label>
+         <Label fx:id="betValueWe" layoutX="41.0" layoutY="86.0" prefHeight="25.0" prefWidth="87.0" text="\$">
+            <font>
+               <Font name="System Bold Italic" size="16.0" />
+            </font>
+         </Label>
+         <Label fx:id="statusTextWe" layoutX="5.0" layoutY="40.0" prefHeight="93.0" prefWidth="111.0" rotate="-16.4" text="STATUS" textAlignment="CENTER" textFill="RED" visible="false">
+            <font>
+               <Font size="55.0" />
+            </font>
+         </Label>
+         <Label layoutX="5.0" text="Hand Value: ">
+            <font>
+               <Font name="System Italic" size="16.0" />
+            </font>
+         </Label>
+         <Label fx:id="handValueWe" layoutX="98.0" layoutY="1.0" text="99">
+            <font>
+               <Font name="System Italic" size="16.0" />
+            </font>
+         </Label>
+      </children>
+   </Pane>
+   <Pane fx:id="valuePane2" layoutX="17.0" layoutY="389.0" prefHeight="124.0" prefWidth="147.0">
+      <children>
+         <Rectangle fx:id="valueAuto2" arcHeight="5.0" arcWidth="5.0" fill="#e5000000" height="88.0" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeType="OUTSIDE" strokeWidth="2.0" width="147.0">
+            <stroke>
+               <RadialGradient centerX="0.5" centerY="0.5" radius="1.0">
+                  <stops>
+                     <Stop>
+                        <color>
+                           <Color />
+                        </color>
+                     </Stop>
+                     <Stop offset="1.0">
+                        <color>
+                           <Color red="1.0" green="1.0" blue="1.0" />
+                        </color>
+                     </Stop>
+                  </stops>
+               </RadialGradient>
+            </stroke>
+            <effect>
+               <Glow level="1.0" />
+            </effect>
+         </Rectangle>
+         <Label layoutX="8.0" layoutY="14.0" text="Funds: ">
+            <font>
+               <Font name="System Italic" size="16.0" />
+            </font>
+         </Label>
+         <Label layoutX="8.0" layoutY="49.0" text="Bet: ">
+            <font>
+               <Font name="System Italic" size="16.0" />
+            </font>
+         </Label>
+         <Label fx:id="fundValue2" layoutX="57.0" layoutY="14.0" prefHeight="25.0" prefWidth="87.0" text="\$">
+            <font>
+               <Font name="System Bold Italic" size="16.0" />
+            </font>
+         </Label>
+         <Label fx:id="betValue2" layoutX="38.0" layoutY="49.0" prefHeight="25.0" prefWidth="87.0" text="\$">
+            <font>
+               <Font name="System Bold Italic" size="16.0" />
+            </font>
+         </Label>
+         <Label fx:id="statusText2" layoutX="2.0" layoutY="3.0" prefHeight="93.0" prefWidth="111.0" rotate="-16.4" text="STATUS" textAlignment="CENTER" textFill="RED" visible="false">
+            <font>
+               <Font size="55.0" />
+            </font>
+         </Label>
+         <Label layoutX="1.0" layoutY="97.0" text="Hand Value: ">
+            <font>
+               <Font name="System Italic" size="16.0" />
+            </font>
+         </Label>
+         <Label fx:id="handValue2" layoutX="94.0" layoutY="98.0" text="99">
+            <font>
+               <Font name="System Italic" size="16.0" />
+            </font>
+         </Label>
+      </children>
+   </Pane>
+   <Pane fx:id="valuePaneDealer" layoutX="200.0" layoutY="48.0" prefHeight="128.0" prefWidth="147.0">
+      <children>
+         <Rectangle fx:id="valueAutoDealer" arcHeight="5.0" arcWidth="5.0" fill="#e5000000" height="88.0" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeType="OUTSIDE" strokeWidth="2.0" width="147.0">
+            <stroke>
+               <RadialGradient centerX="0.5" centerY="0.5" radius="1.0">
+                  <stops>
+                     <Stop>
+                        <color>
+                           <Color />
+                        </color>
+                     </Stop>
+                     <Stop offset="1.0">
+                        <color>
+                           <Color red="1.0" green="1.0" blue="1.0" />
+                        </color>
+                     </Stop>
+                  </stops>
+               </RadialGradient>
+            </stroke>
+            <effect>
+               <Glow level="1.0" />
+            </effect>
+         </Rectangle>
+         <Label layoutX="8.0" layoutY="14.0" text="Funds: ">
+            <font>
+               <Font name="System Italic" size="16.0" />
+            </font>
+         </Label>
+         <Label layoutX="8.0" layoutY="49.0" text="Bet: ">
+            <font>
+               <Font name="System Italic" size="16.0" />
+            </font>
+         </Label>
+         <Label fx:id="fundValueDealer" layoutX="57.0" layoutY="14.0" prefHeight="25.0" prefWidth="87.0" text="\$">
+            <font>
+               <Font name="System Bold Italic" size="16.0" />
+            </font>
+         </Label>
+         <Label fx:id="betValueDealer" layoutX="38.0" layoutY="49.0" prefHeight="25.0" prefWidth="87.0" text="\$">
+            <font>
+               <Font name="System Bold Italic" size="16.0" />
+            </font>
+         </Label>
+         <Label fx:id="statusTextDealer" layoutX="2.0" layoutY="3.0" prefHeight="93.0" prefWidth="111.0" rotate="-16.4" text="STATUS" textAlignment="CENTER" textFill="RED" visible="false">
+            <font>
+               <Font size="55.0" />
+            </font>
+         </Label>
+         <Label layoutX="2.0" layoutY="97.0" text="Hand Value: ">
+            <font>
+               <Font name="System Italic" size="16.0" />
+            </font>
+         </Label>
+         <Label fx:id="handValueDealer" layoutX="95.0" layoutY="98.0" text="99">
+            <font>
+               <Font name="System Italic" size="16.0" />
+            </font>
+         </Label>
+      </children>
+   </Pane>
+   <Pane fx:id="valuePane1" layoutX="567.0" layoutY="181.0" prefHeight="132.0" prefWidth="147.0">
+      <children>
+         <Rectangle fx:id="valueAuto1" arcHeight="5.0" arcWidth="5.0" fill="#e5000000" height="88.0" layoutX="-2.0" layoutY="43.0" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeType="OUTSIDE" strokeWidth="2.0" width="147.0">
+            <stroke>
+               <RadialGradient centerX="0.5" centerY="0.5" radius="1.0">
+                  <stops>
+                     <Stop>
+                        <color>
+                           <Color />
+                        </color>
+                     </Stop>
+                     <Stop offset="1.0">
+                        <color>
+                           <Color red="1.0" green="1.0" blue="1.0" />
+                        </color>
+                     </Stop>
+                  </stops>
+               </RadialGradient>
+            </stroke>
+            <effect>
+               <Glow level="1.0" />
+            </effect>
+         </Rectangle>
+         <Label layoutX="6.0" layoutY="57.0" text="Funds: ">
+            <font>
+               <Font name="System Italic" size="16.0" />
+            </font>
+         </Label>
+         <Label layoutX="6.0" layoutY="92.0" text="Bet: ">
+            <font>
+               <Font name="System Italic" size="16.0" />
+            </font>
+         </Label>
+         <Label fx:id="fundValue1" layoutX="55.0" layoutY="57.0" prefHeight="25.0" prefWidth="87.0" text="\$">
+            <font>
+               <Font name="System Bold Italic" size="16.0" />
+            </font>
+         </Label>
+         <Label fx:id="betValue1" layoutX="36.0" layoutY="92.0" prefHeight="25.0" prefWidth="87.0" text="\$">
+            <font>
+               <Font name="System Bold Italic" size="16.0" />
+            </font>
+         </Label>
+         <Label fx:id="statusText1" layoutY="46.0" prefHeight="93.0" prefWidth="111.0" rotate="-16.4" text="STATUS" textAlignment="CENTER" textFill="RED" visible="false">
+            <font>
+               <Font size="55.0" />
+            </font>
+         </Label>
+         <Label layoutX="-1.0" layoutY="6.0" text="Hand Value: ">
+            <font>
+               <Font name="System Italic" size="16.0" />
+            </font>
+         </Label>
+         <Label fx:id="handValue1" layoutX="92.0" layoutY="7.0" text="99">
+            <font>
+               <Font name="System Italic" size="16.0" />
+            </font>
+         </Label>
+      </children>
+   </Pane>
+   <Label fx:id="roundLabel" layoutX="314.0" layoutY="2.0" text="Round">
+      <font>
+         <Font name="Rockwell Bold Italic" size="33.0" />
+      </font>
+      <textFill>
+         <LinearGradient endX="0.057279236276849645" endY="0.9498806682577565" startX="0.16229116945107397" startY="0.1909307875894988">
+            <stops>
+               <Stop>
+                  <color>
+                     <Color />
+                  </color>
+               </Stop>
+               <Stop offset="1.0">
+                  <color>
+                     <Color red="1.0" green="1.0" blue="1.0" />
+                  </color>
+               </Stop>
+            </stops>
+         </LinearGradient>
+      </textFill>
+   </Label>
+   <Button fx:id="hitButton" layoutX="231.0" layoutY="473.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="65.0" text="Hit">
+      <font>
+         <Font name="System Bold Italic" size="16.0" />
+      </font>
+      <effect>
+         <InnerShadow blurType="GAUSSIAN" choke="0.06" radius="26.775" width="88.1">
+            <color>
+               <Color opacity="0.5957854390144348" />
+            </color>
+         </InnerShadow>
+      </effect>
+   </Button>
+   <Button fx:id="doubleDownButton" layoutX="382.0" layoutY="473.0" mnemonicParsing="false" prefHeight="38.0" prefWidth="125.0" text="Double Down" textAlignment="CENTER" textFill="#ff5e00" wrapText="true">
+      <font>
+         <Font name="System Bold Italic" size="16.0" />
+      </font>
+      <effect>
+         <InnerShadow blurType="GAUSSIAN" choke="0.06" radius="26.775" width="88.1">
+            <color>
+               <Color opacity="0.5957854390144348" />
+            </color>
+         </InnerShadow>
+      </effect>
+   </Button>
+   <Button fx:id="standButton" layoutX="308.0" layoutY="473.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="65.0" text="Stand">
+      <font>
+         <Font name="System Bold Italic" size="16.0" />
+      </font>
+      <effect>
+         <InnerShadow blurType="GAUSSIAN" choke="0.06" radius="26.775" width="88.1">
+            <color>
+               <Color opacity="0.5957854390144348" />
+            </color>
+         </InnerShadow>
+      </effect>
+   </Button>
+   <Label fx:id="turnLabel" layoutX="490.0" layoutY="2.0" text="Turn">
+      <font>
+         <Font name="Rockwell Bold Italic" size="33.0" />
+      </font>
+      <textFill>
+         <LinearGradient endX="0.057279236276849645" endY="0.9498806682577565" startX="0.16229116945107397" startY="0.1909307875894988">
+            <stops>
+               <Stop>
+                  <color>
+                     <Color />
+                  </color>
+               </Stop>
+               <Stop offset="1.0">
+                  <color>
+                     <Color red="1.0" green="1.0" blue="1.0" />
+                  </color>
+               </Stop>
+            </stops>
+         </LinearGradient>
+      </textFill>
+   </Label>
+   <ToolBar prefHeight="43.0" prefWidth="295.0" style="-fx-background-color: #2e8b57; -fx-border-color: #f2a724;">
+     <items>
+       <Button mnemonicParsing="false" text="Main Menu" />
+         <Button mnemonicParsing="false" text="Load Game" />
+         <Button mnemonicParsing="false" text="Save Game" />
+     </items>
+      <effect>
+         <Lighting diffuseConstant="2.0" specularConstant="1.36" specularExponent="28.31" surfaceScale="1.56">
+            <bumpInput>
+               <Shadow />
+            </bumpInput>
+            <light>
+               <Light.Distant>
+                  <color>
+                     <Color red="0.6136695742607117" green="0.8931834697723389" blue="0.9078947305679321" />
+                  </color>
+               </Light.Distant>
+            </light>
+         </Lighting>
+      </effect>
+   </ToolBar>
+   <ImageView fx:id="initCardAuto22" fitHeight="129.0" fitWidth="91.0" layoutX="77.0" layoutY="212.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+         <Image url="@images/cards/00_BACK.png" />
+      </image>
+      <effect>
+         <DropShadow blurType="TWO_PASS_BOX" height="25.48" radius="11.4925" spread="0.02" width="22.49" />
+      </effect>
+   </ImageView>
+   <ImageView fx:id="initCardAuto21" fitHeight="129.0" fitWidth="91.0" layoutX="77.0" layoutY="249.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+         <Image url="@images/cards/00_BACK.png" />
+      </image>
+      <effect>
+         <DropShadow blurType="TWO_PASS_BOX" height="25.48" radius="11.4925" spread="0.02" width="22.49" />
+      </effect>
+   </ImageView>
+   <ImageView fx:id="initCardAuto11" fitHeight="129.0" fitWidth="91.0" layoutX="565.0" layoutY="325.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+         <Image url="@images/cards/00_BACK.png" />
+      </image>
+      <effect>
+         <DropShadow blurType="TWO_PASS_BOX" height="25.48" radius="11.4925" spread="0.02" width="22.49" />
+      </effect>
+   </ImageView>
+   <ImageView fx:id="initCardAuto12" fitHeight="129.0" fitWidth="91.0" layoutX="565.0" layoutY="362.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+         <Image url="@images/cards/00_BACK.png" />
+      </image>
+      <effect>
+         <DropShadow blurType="TWO_PASS_BOX" height="25.48" radius="11.4925" spread="0.02" width="22.49" />
+      </effect>
+   </ImageView>
+   <Label fx:id="gameStatus" layoutX="137.0" layoutY="250.0" text="game status" textAlignment="CENTER">
+      <font>
+         <Font name="Old English Text MT" size="96.0" />
+      </font>
+   </Label>
+   <ImageView fx:id="initCardWe1" fitHeight="129.0" fitWidth="91.0" layoutX="252.0" layoutY="526.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+         <Image url="@images/cards/00_BACK.png" />
+      </image>
+      <effect>
+         <DropShadow blurType="TWO_PASS_BOX" height="25.48" radius="11.4925" spread="0.02" width="22.49" />
+      </effect>
+   </ImageView>
+   <ImageView fx:id="initCardDealer1" fitHeight="129.0" fitWidth="91.0" layoutX="360.0" layoutY="43.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+         <Image url="@images/cards/00_BACK.png" />
+      </image>
+      <effect>
+         <DropShadow blurType="TWO_PASS_BOX" height="25.48" radius="11.4925" spread="0.02" width="22.49" />
+      </effect>
+   </ImageView>
+   <ImageView fx:id="initCardDealer2" fitHeight="129.0" fitWidth="91.0" layoutX="381.0" layoutY="43.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+         <Image url="@images/cards/00_BACK.png" />
+      </image>
+      <effect>
+         <DropShadow blurType="TWO_PASS_BOX" height="25.48" radius="11.4925" spread="0.02" width="22.49" />
+      </effect>
+   </ImageView>
+</children>
+</AnchorPane>
+
