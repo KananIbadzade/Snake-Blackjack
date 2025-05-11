@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.geometry.Insets?>
+<?import javafx.geometry.Pos?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ToolBar?>
@@ -12,24 +13,23 @@
             fx:controller="org.example.snakeblackjack.blackjack.BlackjackController"
             prefWidth="800" prefHeight="600">
 
+    <!-- Top toolbar with a back-to-menu button -->
     <top>
-        <VBox spacing="5" style="-fx-background-color: #2e8b57;" alignment="CENTER_LEFT">
+        <VBox spacing="0" style="-fx-background-color: #2e8b57;" alignment="CENTER_LEFT">
             <ToolBar>
                 <Button text="Main Menu" onAction="#backToMainMenu"/>
                 <Label text="Blackjack"
                        style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: black;"
                        BorderPane.alignment="CENTER"/>
             </ToolBar>
-            <HBox spacing="20" alignment="CENTER_LEFT">
-                <padding>
-                    <Insets top="10" right="10" bottom="10" left="10"/>
-                </padding>
+            <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-padding: 5 10 5 10;">
                 <Label fx:id="turnLabel" text="Turn: " style="-fx-text-fill: white; -fx-font-size: 14px;"/>
                 <Label fx:id="roundLabel" text="Round: " style="-fx-text-fill: white; -fx-font-size: 14px;"/>
             </HBox>
         </VBox>
     </top>
 
+    <!-- Center area for showing cards/panels -->
     <center>
         <GridPane fx:id="tableGrid"
                   hgap="10" vgap="10"
@@ -40,23 +40,19 @@
         </GridPane>
     </center>
 
+
+    <!-- Bottom controls for the player -->
     <bottom>
         <VBox spacing="10">
             <padding>
                 <Insets top="10" right="10" bottom="10" left="10"/>
             </padding>
-            <Label fx:id="statusLabel"
-                   text=""
-                   wrapText="true"
-                   style="-fx-text-fill: yellow; -fx-font-size: 14px;"
-                   BorderPane.alignment="CENTER"/>
-
             <HBox spacing="10" alignment="CENTER">
                 <Button fx:id="hitButton"   text="Hit"   onAction="#onHit"/>
                 <Button fx:id="standButton" text="Stand" onAction="#onStand"/>
-                <Button text="Save"  onAction="#onSaveState"/>
-                <Button text="Load"  onAction="#onLoadState"/>
-                <Button text="Next Round" onAction="#onNextRound"/>
+                <Button text="Save"         onAction="#onSaveState"/>
+                <Button text="Load"         onAction="#onLoadState"/>
+                <Button text="New Game"   onAction="#onNextRound"/>
             </HBox>
         </VBox>
     </bottom>

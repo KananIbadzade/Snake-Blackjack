@@ -1,6 +1,11 @@
 package org.example.snakeblackjack.blackjack;
 
+/**
+ * Dealer follows standard blackjack rules.
+ * Hits below 17 or on a “soft” 17 (with Ace).
+ */
 public class Dealer extends Player {
+
     public Dealer() {
         super("Dealer");
     }
@@ -9,7 +14,7 @@ public class Dealer extends Player {
     public boolean wantsToHit() {
         int total = handValue();
 
-        // check if there's an Ace in the hand
+        // checks if dealer has an Ace (for soft 17 rule)
         boolean hasAce = false;
         for (Card c : hand) {
             if (c.getRank().equals("Ace")) {
@@ -18,14 +23,6 @@ public class Dealer extends Player {
             }
         }
 
-        // hit on any total less than 17
-        // or on a “soft” 17 (total == 17 and at least one Ace)
-        if (total < 17) {
-            return true;
-        }
-        if (total == 17 && hasAce) {
-            return true;
-        }
-        return false;  // otherwise stand
+        return total < 17 || (total == 17 && hasAce);
     }
 }
