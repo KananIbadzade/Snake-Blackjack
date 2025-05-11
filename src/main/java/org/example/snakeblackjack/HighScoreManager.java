@@ -71,7 +71,11 @@ public class HighScoreManager {
 
     public void updateSnakeScore(String username, int newScore) {
         int currentScore = snakeHighScores.getOrDefault(username, DEFAULT_SCORE);
-        if (newScore > currentScore) {
+//        if (newScore > currentScore) {
+//              snakeHighScores.put(username, newScore);
+//            saveScores();
+//        }
+        if (currentScore == DEFAULT_SCORE || newScore > currentScore) {
             snakeHighScores.put(username, newScore);
             saveScores();
         }
@@ -82,4 +86,11 @@ public class HighScoreManager {
         blackJackHighScores.put(username, newScore);
         saveScores();
     }
+    public List<Map.Entry<String, Integer>> getTop5SnakeScores() {
+        return snakeHighScores.entrySet().stream()
+                .sorted((a, b) -> b.getValue() - a.getValue()) // sort descending
+                .limit(5)
+                .toList();
+    }
+
 }

@@ -28,7 +28,7 @@
                 </ImageView>
             </HBox>
 
-            <Label text="Welcome to the Games!" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
+            <Label text="Welcome to the Casino!" style="-fx-font-size: 20px; -fx-font-weight: bold;"/>
 
             <TextField fx:id="usernameField" promptText="Username" prefWidth="300"/>
             <PasswordField fx:id="passwordField" promptText="Password" prefWidth="300"/>
