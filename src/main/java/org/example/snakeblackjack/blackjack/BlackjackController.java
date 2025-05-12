@@ -44,7 +44,6 @@ public class BlackjackController {
         mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE); // loop music
         mediaPlayer.play();
 
-        BlackjackGame game = BlackjackGame.getInstance();
         BlackjackGame.getInstance().setRoundNumber(0);
         BlackjackGame.getInstance().startNewRound();
 
@@ -105,6 +104,7 @@ public class BlackjackController {
     private void backToMainMenu() {
         Stage stage = (Stage) tableGrid.getScene().getWindow();
         mediaPlayer.stop();
+        BlackjackGame.getInstance().updateScore();
         BlackjackGame.getInstance().loadFromString("0|You:1000:50:5 of Hearts,Queen of Hearts;Bot A:1000:50:King of Clubs,Jack of Hearts;Bot B:1000:50:6 of Hearts,4 of Diamonds;Dealer:1000:50:6 of Clubs,Ace of Spades;");
 
         refreshUI();

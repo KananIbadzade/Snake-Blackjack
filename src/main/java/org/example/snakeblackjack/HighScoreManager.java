@@ -15,6 +15,7 @@ public class HighScoreManager {
 
         loadScores();
     }
+
     private void loadScores() {
         File file = new File(FILE_NAME);
         if (!file.exists()) {
@@ -38,6 +39,7 @@ public class HighScoreManager {
             System.out.println("Error could not read highscore file");
         }
     }
+
     public void saveScores() {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
             for (String username : snakeHighScores.keySet()) {
@@ -50,6 +52,7 @@ public class HighScoreManager {
             System.out.println("Error could not write high scores file.");
         }
     }
+
     public void defaultScoresForUsers(String username){
         if(!snakeHighScores.containsKey(username)){
             snakeHighScores.put(username, DEFAULT_SCORE);
@@ -93,4 +96,10 @@ public class HighScoreManager {
                 .toList();
     }
 
+    public List<Map.Entry<String, Integer>> getTop5BlackScores() {
+        return blackJackHighScores.entrySet().stream()
+            .sorted((a, b) -> b.getValue() - a.getValue()) // sort descending
+            .limit(5)
+            .toList();
+    }
 }

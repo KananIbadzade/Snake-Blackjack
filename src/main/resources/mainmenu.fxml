@@ -20,8 +20,6 @@
 
 
             <Label fx:id="welcomeLabel" layoutX="20.0" layoutY="14.0" text="Welcome," />
-      <Label fx:id="snakeScoreLabel" layoutX="201.0" layoutY="252.0" text="Snake High Score: " />
-      <Label fx:id="blackjackScoreLabel" layoutX="14.0" layoutY="170.0" text="Top 5 Blackjack High Score: " />
 
       <Button alignment="CENTER" contentDisplay="CENTER" layoutX="523.0" layoutY="49.0" onAction="#launchSnake" prefHeight="37.0" prefWidth="116.0" style="-fx-background-color: #fff878;" text="Snake" textAlignment="CENTER">
       <font>
@@ -45,10 +43,7 @@
             </color>
          </DropShadow>
       </effect></Button>
-
-
-    <Label fx:id="topScoresLabel" layoutX="20.0" layoutY="49.0" text="Top 5 Snake Scores:" />
-    <TextArea fx:id="topScoresArea" editable="false" layoutX="143.0" layoutY="11.0" prefHeight="150.0" prefRowCount="6" prefWidth="300.0" wrapText="true" />
+    <TextArea fx:id="topScoresArea" editable="false" layoutX="20.0" layoutY="34.0" prefHeight="150.0" prefRowCount="6" prefWidth="300.0" wrapText="true" />
    <Button alignment="CENTER" contentDisplay="CENTER" layoutX="437.0" layoutY="161.0" style="-fx-background-color: #fff878;" text="Coming Soon" textAlignment="CENTER">
       <font>
          <Font name="Elephant Italic" size="18.0" />
@@ -61,5 +56,6 @@
          </DropShadow>
       </effect>
    </Button>
+   <TextArea fx:id="topScoresAreaBlkJk" editable="false" layoutX="20.0" layoutY="198.0" prefHeight="150.0" prefRowCount="6" prefWidth="300.0" wrapText="true" />
 
 </AnchorPane>

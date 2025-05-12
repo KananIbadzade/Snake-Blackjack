@@ -6,6 +6,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.control.Alert;
+import org.example.snakeblackjack.HighScoreManager;
 
 import java.util.*;
 
@@ -23,9 +24,33 @@ public class BlackjackGame {
     private boolean roundOver = false;
     private String lastRoundStatus = "";
 
+    private String currentUserName;
+    private HighScoreManager scoreManager;
+
     private final Map<Player, String> roundResults = new HashMap<>();
     private Runnable onRoundComplete;   // callback to update the UI
 
+    public void setUsername(String username) {
+        this.currentUserName = username;
+    }
+
+    public void setScoreManager(HighScoreManager manager) {
+        this.scoreManager = manager;
+    }
+
+
+    public void updateScore(){
+        if (scoreManager != null && currentUserName != null) {
+            int oldScore = scoreManager.getBlackjackScore(currentUserName);
+            System.out.println("OLD SCORE: " + oldScore);
+            System.out.println("Current Score: " + roundNumber);
+
+            if (oldScore == 1000 || roundNumber > oldScore) {
+                scoreManager.updateBlackjackScore(currentUserName, roundNumber);
+                System.out.println("BlackJack score updated to: " + roundNumber);
+            }
+        }
+    }
     // refreshes screen after each round
     public void setOnRoundComplete(Runnable callback) {
         this.onRoundComplete = callback;
@@ -56,6 +81,7 @@ public class BlackjackGame {
             alert.setHeaderText("You're out of money!");
             alert.setContentText("Your balance is $0. The game is over.");
             alert.showAndWait();
+            updateScore();
             return;
         }
 
