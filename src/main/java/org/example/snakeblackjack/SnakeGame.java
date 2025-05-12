@@ -1,6 +1,8 @@
 // SnakeGame.java
 package org.example.snakeblackjack;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
@@ -67,6 +69,11 @@ public class SnakeGame extends Application {
 
     private MediaPlayer mediaPlayer;
 
+    private Stage stageForMenu;
+
+    public void setStage(Stage stage) {
+        stageForMenu = stage;
+    }
 
     private static class BodyPart{
          Deque<Point2D> nodeTrail = new ArrayDeque<>();
@@ -477,21 +484,37 @@ public class SnakeGame extends Application {
         });
 
         returnToMenu.setOnAction(e -> {
-            inGame = false;
-            if (timeline != null) timeline.stop();
             Stage stage = (Stage) gameScene.getWindow();
-            Scene preScene = getPreScene();
+
+            timeline.stop();
+            mediaPlayer.stop();
+
+            //reset the game state
+            score = 0;
+            lastScore = 0;
+            direction = Direction.UP;
+            speed = 5.0; //reset to default speed
+            gameOverText.setVisible(false);
+            gameRestartHint.setVisible(false);
 
 
-            preScene.setOnKeyPressed(event -> {
-                if (event.getCode() == KeyCode.SPACE) {
-                    event.consume();
-                    stage.setScene(gameScene);
-                    restartGame((Stage) gameScene.getWindow());
-                }
-            });
+            snakeBody.clear();
 
-            stage.setScene(preScene);
+            stage.close();
+
+            Parent mainMenuRoot = null;
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/mainmenu.fxml"));
+                mainMenuRoot = loader.load();
+            }catch (Exception e1) { System.out.println("Error loading main menu");}
+            stageForMenu.setWidth(666);
+            stageForMenu.setHeight(417);
+            stageForMenu.setTitle("MainMenu");
+            stageForMenu.setScene(new Scene(mainMenuRoot));
+            stageForMenu.setResizable(false);
+            stageForMenu.show();
+            e.consume();
+
         });
 
         gameMenu.getItems().addAll(pauseMenuItem, restartMenuItem, returnToMenu);
@@ -628,13 +651,14 @@ public class SnakeGame extends Application {
             this.scoreManager = manager;
         }
 
-    public static void launchGame(Stage stage, String username) {
+    public void launchGame(Stage stage, String username) {
             try {
                 SnakeGame game = new SnakeGame();
                 HighScoreManager manager = new HighScoreManager();
                 //manager.defaultScoresForUsers(username);
                 game.setUsername(username);
                 game.setScoreManager(new HighScoreManager());
+                game.setStage(stage);
                 game.start(stage);
             } catch (IOException e) {
                 System.out.println(e.getMessage());
