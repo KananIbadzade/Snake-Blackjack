@@ -17,7 +17,7 @@ There's a lot of code, but its largely split into 3 categories:
 <br>
 Snake Game, BlackJack, and GameManager/Login.
 <br>
-Open in a new tab and zoom in if you want to see more.
+Open the image in  a new tab and zoom in if you want to see more details.
 
 # Installation Instructions
 Pre-requisites:
