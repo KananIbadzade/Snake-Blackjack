@@ -44,7 +44,7 @@ Step 4: Profit!
 # Contribution  
 Ryan: This README, Encrypting/Decrypting Game state, Hashing passwords, and some other small contributions   
 Sean:   
-Efe:   
+Efe: I have added snake movement, highscore storing and displaying on snake game, and adding songs to both games.
 Kenan:  
 
 
