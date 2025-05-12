@@ -23,6 +23,7 @@ public class BlackjackGame {
     private int roundNumber = 0;
     private boolean roundOver = false;
     private String lastRoundStatus = "";
+    private BlackJackManager manager = new BlackJackManager();
 
     private String currentUserName;
     private HighScoreManager scoreManager;
@@ -329,6 +330,7 @@ public class BlackjackGame {
     public boolean isRoundOver() { return roundOver; }
 
     public String getSaveString() {
+
         return BlackJackManager.saveState(this);
     }
 

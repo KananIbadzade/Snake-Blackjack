@@ -4,13 +4,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-
 import java.util.Optional;
 
 import javafx.scene.media.Media;
@@ -80,8 +76,17 @@ public class BlackjackController {
     @FXML
     private void onSaveState() {
         String save = BlackjackGame.getInstance().getSaveString();
-        Alert alert = new Alert(Alert.AlertType.INFORMATION, save);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setHeaderText("Your save string (copy this):");
+        alert.setContentText(save);
+
+        DialogPane dialogPane = alert.getDialogPane();
+        TextArea textArea = new TextArea(alert.getContentText());
+        textArea.setEditable(false);  // Make it read-only
+        textArea.setWrapText(true);   // Enable text wrapping
+        textArea.setMaxWidth(Double.MAX_VALUE);
+        textArea.setMaxHeight(Double.MAX_VALUE);
+        dialogPane.setContent(textArea);
         alert.showAndWait();
     }
 

@@ -4,6 +4,7 @@ module org.example.snakeblackjack {
     requires java.desktop;
     requires javafx.media;
     requires bcrypt;
+    requires java.logging;
 
     opens org.example.snakeblackjack to javafx.fxml;
     opens org.example.snakeblackjack.blackjack to javafx.fxml;
