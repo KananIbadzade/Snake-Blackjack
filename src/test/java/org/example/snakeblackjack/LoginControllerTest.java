@@ -15,9 +15,9 @@ class LoginControllerTest {
     @Mock
     private AccountManager mockAccountManager;
 
-    // Create a simplified controller just for tests
+    // Create a simplified controller class just for tests
     private class TestLoginController {
-        private String username;    
+        private String username;
         private String password;
         private String statusMessage;
         private boolean gameManagerOpened = false;
@@ -68,15 +68,15 @@ class LoginControllerTest {
 
     @Test
     void handleLogin_failure() {
-        // Arrange
+
         controller.username = "wrongUser";
         controller.password = "wrongPass";
         when(mockAccountManager.checkExist("wrongUser", "wrongPass")).thenReturn(false);
 
-        // Act
+
         controller.handleLogin();
 
-        // Assert
+
         assertNull(LoginController.loggedInUserName);
         assertEquals("Invalid username or password.", controller.statusMessage);
         assertFalse(controller.gameManagerOpened);
@@ -85,12 +85,12 @@ class LoginControllerTest {
 
     @Test
     void handleCreateAccount_success() {
-        // Arrange
+
         controller.username = "newUser";
         controller.password = "newPass";
         when(mockAccountManager.createAccount("newUser", "newPass")).thenReturn(true);
 
-        // Act
+
         controller.handleCreateAccount();
 
         // Assert
@@ -100,15 +100,14 @@ class LoginControllerTest {
 
     @Test
     void handleCreateAccount_failure() {
-        // Arrange
+
         controller.username = "existingUser";
         controller.password = "anyPass";
         when(mockAccountManager.createAccount("existingUser", "anyPass")).thenReturn(false);
 
-        // Act
+
         controller.handleCreateAccount();
 
-        // Assert
         assertEquals("Username already exists.", controller.statusMessage);
         verify(mockAccountManager).createAccount("existingUser", "anyPass");
     }

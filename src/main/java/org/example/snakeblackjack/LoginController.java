@@ -15,7 +15,6 @@ public class LoginController {
 
     private AccountManager accountManager = new AccountManager();
     private HighScoreManager scoreManager = new HighScoreManager();
-
     public static String loggedInUserName;
 
     @FXML

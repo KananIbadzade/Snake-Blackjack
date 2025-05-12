@@ -1,12 +1,14 @@
 package org.example.snakeblackjack;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
+
 import java.io.*;
 import java.util.*;
 
 public class AccountManager {
     private static final String FILE_NAME = "user_accounts.txt";
     private Map<String, String> accounts = new HashMap<>();
-
+    private final PasswordHash passwordHash = new PasswordHash();
     public AccountManager() {
         loadAccounts();
     }
@@ -25,13 +27,15 @@ public class AccountManager {
         }
     }
 
+    //At this point, passwords should be Hashed
     public boolean checkExist(String username, String password) {
-        return accounts.containsKey(username) && accounts.get(username).equals(password);
+        return accounts.containsKey(username) && passwordHash.checkStoredPassword(password, accounts.get(username));
     }
 
     public boolean createAccount(String username, String password) {
-        if (accounts.containsKey(username)) return false;
-        accounts.put(username, password);
+        passwordHash.setHashedPassword(password);
+        if (accounts.containsKey(passwordHash.getHashedPassword())) return false;
+        accounts.put(username, passwordHash.getHashedPassword());
         saveAccounts();
         return true;
     }
