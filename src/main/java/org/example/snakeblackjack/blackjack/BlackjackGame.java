@@ -37,7 +37,10 @@ public class BlackjackGame {
         players.add(new AutoPlayer("Bot A", 16));
         players.add(new AutoPlayer("Bot B", 18));
         players.add(new Dealer());
-        //startNewRound();
+    }
+
+    public void setRoundNumber(int roundNumber) {
+        this.roundNumber = roundNumber;
     }
 
     public List<Player> getPlayers() {

@@ -3,33 +3,63 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
-
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="200.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.snakeblackjack.MainMenuController">
+   <ImageView fitHeight="419.0" fitWidth="666.0" layoutX="-7.0" layoutY="-20.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+         <Image url="@images/MainMenuBkGd.jpg" />
+      </image>
+   </ImageView>
+ 
 
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="org.example.snakeblackjack.MainMenuController"
-       prefHeight="200.0" prefWidth="200.0">
+            <Label fx:id="welcomeLabel" layoutX="20.0" layoutY="14.0" text="Welcome," />
+      <Label fx:id="snakeScoreLabel" layoutX="201.0" layoutY="252.0" text="Snake High Score: " />
+      <Label fx:id="blackjackScoreLabel" layoutX="14.0" layoutY="170.0" text="Top 5 Blackjack High Score: " />
+
+      <Button alignment="CENTER" contentDisplay="CENTER" layoutX="523.0" layoutY="49.0" onAction="#launchSnake" prefHeight="37.0" prefWidth="116.0" style="-fx-background-color: #fff878;" text="Snake" textAlignment="CENTER">
+      <font>
+         <Font name="Elephant Italic" size="18.0" />
+      </font>
+      <effect>
+         <DropShadow blurType="GAUSSIAN" height="24.73" radius="12.7975" spread="0.37" width="28.46">
+            <color>
+               <Color red="1.0" green="0.7372549176216125" blue="0.0784313753247261" />
+            </color>
+         </DropShadow>
+      </effect></Button>
+      <Button alignment="CENTER" contentDisplay="CENTER" layoutX="483.0" layoutY="105.0" onAction="#launchBlackjack" prefHeight="37.0" prefWidth="123.0" style="-fx-background-color: #fff878;" text="Blackjack" textAlignment="CENTER">
+      <font>
+         <Font name="Elephant Italic" size="18.0" />
+      </font>
+      <effect>
+         <DropShadow blurType="GAUSSIAN" height="24.73" radius="12.7975" spread="0.37" width="28.46">
+            <color>
+               <Color red="1.0" green="0.7372549176216125" blue="0.0784313753247261" />
+            </color>
+         </DropShadow>
+      </effect></Button>
 
 
-
-            <Label fx:id="welcomeLabel" layoutX="15.0" layoutY="14.0" text="Welcome," />
-      <Label fx:id="snakeScoreLabel" layoutX="18.0" layoutY="47.0" text="Snake High Score: " />
-      <Label fx:id="blackjackScoreLabel" layoutX="18.0" layoutY="80.0" text="Blackjack High Score: " />
-
-      <Button layoutX="15.0" layoutY="150.0" onAction="#launchSnake" text="Play Snake" />
-      <Button layoutX="166.0" layoutY="150.0" onAction="#launchBlackjack" text="Play Blackjack" />
-
-
-    <Label fx:id="topScoresLabel" layoutX="20" layoutY="250" text="Top 5 Snake Scores:" />
-    <TextArea fx:id="topScoresArea"
-              editable="false"
-              prefRowCount="6"
-              wrapText="true"
-              prefHeight="150.0"
-              prefWidth="300.0"/>
+    <Label fx:id="topScoresLabel" layoutX="20.0" layoutY="49.0" text="Top 5 Snake Scores:" />
+    <TextArea fx:id="topScoresArea" editable="false" layoutX="143.0" layoutY="11.0" prefHeight="150.0" prefRowCount="6" prefWidth="300.0" wrapText="true" />
+   <Button alignment="CENTER" contentDisplay="CENTER" layoutX="437.0" layoutY="161.0" style="-fx-background-color: #fff878;" text="Coming Soon" textAlignment="CENTER">
+      <font>
+         <Font name="Elephant Italic" size="18.0" />
+      </font>
+      <effect>
+         <DropShadow blurType="GAUSSIAN" height="24.73" radius="12.7975" spread="0.37" width="28.46">
+            <color>
+               <Color red="1.0" green="0.7372549176216125" blue="0.0784313753247261" />
+            </color>
+         </DropShadow>
+      </effect>
+   </Button>
 
 </AnchorPane>
-
-
-
-

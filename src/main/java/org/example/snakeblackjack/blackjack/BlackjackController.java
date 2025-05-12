@@ -45,7 +45,9 @@ public class BlackjackController {
         mediaPlayer.play();
 
         BlackjackGame game = BlackjackGame.getInstance();
+        BlackjackGame.getInstance().setRoundNumber(0);
         BlackjackGame.getInstance().startNewRound();
+
         refreshUI();
     }
 
