@@ -552,12 +552,13 @@ public class SnakeGame extends Application {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/mainmenu.fxml"));
                 mainMenuRoot = loader.load();
             }catch (Exception e1) { System.out.println("Error loading main menu");}
-            stageForMenu.setWidth(666);
-            stageForMenu.setHeight(417);
+
+            Stage stageForMenu = new Stage();
             stageForMenu.setTitle("MainMenu");
             stageForMenu.setScene(new Scene(mainMenuRoot));
             stageForMenu.setResizable(false);
             stageForMenu.show();
+            stageForMenu.getScene().getRoot().requestFocus();
             e.consume();
 
         });
