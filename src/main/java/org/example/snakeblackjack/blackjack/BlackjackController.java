@@ -45,7 +45,7 @@ public class BlackjackController {
         mediaPlayer.play();
 
         BlackjackGame game = BlackjackGame.getInstance();
-        game.setOnRoundComplete(() -> refreshUI());
+        BlackjackGame.getInstance().startNewRound();
         refreshUI();
     }
 
@@ -103,16 +103,20 @@ public class BlackjackController {
     private void backToMainMenu() {
         Stage stage = (Stage) tableGrid.getScene().getWindow();
         mediaPlayer.stop();
+        BlackjackGame.getInstance().loadFromString("0|You:1000:50:5 of Hearts,Queen of Hearts;Bot A:1000:50:King of Clubs,Jack of Hearts;Bot B:1000:50:6 of Hearts,4 of Diamonds;Dealer:1000:50:6 of Clubs,Ace of Spades;");
+
+        refreshUI();
         stage.close();
         Parent root = null;
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/mainmenu.fxml"));
             root = loader.load();
         }catch (Exception e) { System.out.println("Error loading main menu");}
-        stage.setTitle("MainMenu");
+        this.stage.setTitle("MainMenu");
         this.stage.setScene(new Scene(root));
         this.stage.setResizable(false);
         this.stage.show();
+
     }
 
     // "Next Round" button is clicked
