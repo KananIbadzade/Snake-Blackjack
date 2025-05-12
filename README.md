@@ -42,9 +42,12 @@ Step 4: Profit!
 
 
 # Contribution  
-Ryan: This README, Encrypting/Decrypting Game state, Hashing passwords, and some other small contributions   
-Sean:   
-Efe:   
-Kenan:  
+Ryan:  This README, Encrypting/Decrypting Game state, Hashing passwords, Unit Test, and some other small contributions   
+
+Sean:  Snake game, MainMenu, HighScore for Black Jack
+
+Efe:   Snake game, Login Menu, HighScore for Snake
+
+Kenan: Black Jack whole game
 
 
