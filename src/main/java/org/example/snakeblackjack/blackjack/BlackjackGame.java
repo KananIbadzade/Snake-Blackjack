@@ -22,6 +22,7 @@ public class BlackjackGame {
     private int roundNumber = 0;
     private boolean roundOver = false;
     private String lastRoundStatus = "";
+    private BlackJackManager manager = new BlackJackManager();
 
     private final Map<Player, String> roundResults = new HashMap<>();
     private Runnable onRoundComplete;   // callback to update the UI
@@ -300,6 +301,7 @@ public class BlackjackGame {
     public boolean isRoundOver() { return roundOver; }
 
     public String getSaveString() {
+
         return BlackJackManager.saveState(this);
     }
 
