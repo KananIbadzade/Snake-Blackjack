@@ -2,6 +2,7 @@
 package org.example.snakeblackjack;
 
 import javafx.application.Platform;
+import javafx.animation.Animation;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -117,7 +118,6 @@ public class SnakeGame extends Application {
                 @Override
                 public void handle(long now) {
                     if (inGame) {
-
                         handleKeyPressGameScene(stage);
                         midGame(stage, stage.getScene());
                     }
@@ -372,14 +372,18 @@ public class SnakeGame extends Application {
         gameScene.setOnKeyPressed(new EventHandler<>() {
             @Override
             public void handle(KeyEvent event) {
-                if(!inGame) {
-                    if(event.getCode() == KeyCode.SPACE) {
-
-
+                 if (!inGame) {
+                    if (event.getCode() == KeyCode.SPACE) {
                         event.consume();
-
                         restartGame(stage);
+                    } else if (event.getCode() == KeyCode.ESCAPE) {
+                        if (timeline.getStatus() == Animation.Status.PAUSED) {
+                            event.consume();
+                            timeline.play();
+                            inGame = true;
+                        }
                     }
+
                     return;
                 }
                 System.out.println("Speed: " + speed);
@@ -392,9 +396,13 @@ public class SnakeGame extends Application {
                 } else if (event.getCode() == KeyCode.RIGHT && !direction.equals(Direction.LEFT)) {
                     direction = Direction.RIGHT;
                 } else if (event.getCode() == KeyCode.ESCAPE) {
-                    inGame = false;
-                    //stage.setScene(getPreScene());
-                    System.out.println("game Stopped");
+                    if (timeline.getStatus() == Animation.Status.RUNNING) {
+                        timeline.pause();
+                        inGame = false;
+                    } else if (timeline.getStatus() == Animation.Status.PAUSED) {
+                        timeline.play();
+                        inGame = true;
+                    }
                 }
                 event.consume();
             }
@@ -521,13 +529,12 @@ public class SnakeGame extends Application {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/mainmenu.fxml"));
                 mainMenuRoot = loader.load();
             }catch (Exception e1) { System.out.println("Error loading main menu");}
-
-            Stage stageForMenu = new Stage();
+            stageForMenu.setWidth(666);
+            stageForMenu.setHeight(417);
             stageForMenu.setTitle("MainMenu");
             stageForMenu.setScene(new Scene(mainMenuRoot));
             stageForMenu.setResizable(false);
             stageForMenu.show();
-            stageForMenu.getScene().getRoot().requestFocus();
             e.consume();
 
         });
@@ -617,22 +624,26 @@ public class SnakeGame extends Application {
         Scene preScene = getPreScene();
         Scene gameScene = getGameScene();
 
+        /* commented out setting the icon code May.01.25
+        InputStream input = getClass().getResourceAsStream("/icon.png");
+        Image icon = new Image(input);
+        Image image = new Image("https://drive.google.com/uc?export=view&id=1mnLEnbq6SLHUx_sIfNVAlQJK7Yc9f0zp");
 
+        stage.getIcons().add(image);*/
         stage.setTitle("Best Snake Game in the World");
         stage.setWidth(800);
         stage.setHeight(600);
         stage.setResizable(false);
         stage.setScene(preScene);
-        //preScene.getRoot().requestFocus();
+
 
         SnakeGame game = new SnakeGame();
-
+        //game.midGame(root, scene, snakeHead, text);
 
         preScene.setOnKeyPressed(event -> {
             if ((event.getCode() == KeyCode.SPACE)) {
                 event.consume();
                 stage.setScene(gameScene);
-                gameScene.getRoot().requestFocus();
                 inGame = true;
                 startGameLoop(stage);
             }
@@ -645,9 +656,6 @@ public class SnakeGame extends Application {
         mediaPlayer.play();
 
         stage.show();
-
-        Node focusedNode = stage.getScene().getFocusOwner();
-        System.out.println("Focused node: " + focusedNode);
 
     }
 
