@@ -1,7 +1,9 @@
 // SnakeGame.java
 package org.example.snakeblackjack;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -115,6 +117,7 @@ public class SnakeGame extends Application {
                 @Override
                 public void handle(long now) {
                     if (inGame) {
+
                         handleKeyPressGameScene(stage);
                         midGame(stage, stage.getScene());
                     }
@@ -356,8 +359,15 @@ public class SnakeGame extends Application {
 
     public void handleKeyPressGameScene(Stage stage) {
 
-        Scene gameScene = stage.getScene();
+        // Ensure root can take focus
+        stage.getScene().getRoot().setFocusTraversable(true);
 
+        // Delay focus request until after render
+        Platform.runLater(() -> {
+            stage.getScene().getRoot().requestFocus();
+        });
+        Scene gameScene = stage.getScene();
+        gameScene.getRoot().requestFocus();
         // Using a traditional event handler instead of a lambda expression
         gameScene.setOnKeyPressed(new EventHandler<>() {
             @Override
@@ -394,6 +404,9 @@ public class SnakeGame extends Application {
             System.out.println("Mouse clicked at: X=" + event.getX() + ", Y=" + event.getY());
             event.consume();
         });
+
+
+
     }
 
     private Rectangle getNewFood(Scene scene) {
@@ -501,7 +514,6 @@ public class SnakeGame extends Application {
 
             snakeBody.clear();
 
-            stage.close();
 
             Parent mainMenuRoot = null;
             try {
@@ -603,21 +615,16 @@ public class SnakeGame extends Application {
         Scene preScene = getPreScene();
         Scene gameScene = getGameScene();
 
-        /* commented out setting the icon code May.01.25
-        InputStream input = getClass().getResourceAsStream("/icon.png");
-        Image icon = new Image(input);
-        Image image = new Image("https://drive.google.com/uc?export=view&id=1mnLEnbq6SLHUx_sIfNVAlQJK7Yc9f0zp");
 
-        stage.getIcons().add(image);*/
         stage.setTitle("Best Snake Game in the World");
         stage.setWidth(800);
         stage.setHeight(600);
         stage.setResizable(false);
         stage.setScene(preScene);
-        preScene.getRoot().requestFocus();
+        //preScene.getRoot().requestFocus();
 
         SnakeGame game = new SnakeGame();
-        //game.midGame(root, scene, snakeHead, text);
+
 
         preScene.setOnKeyPressed(event -> {
             if ((event.getCode() == KeyCode.SPACE)) {
@@ -636,6 +643,9 @@ public class SnakeGame extends Application {
         mediaPlayer.play();
 
         stage.show();
+
+        Node focusedNode = stage.getScene().getFocusOwner();
+        System.out.println("Focused node: " + focusedNode);
 
     }
 
