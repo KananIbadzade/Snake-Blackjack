@@ -1,0 +1,253 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class AESEncryption {
+  + AESEncryption(): 
+  + generateIV(): byte[]
+  + encrypt(String, SecretKey, byte[]): String
+  + generateKey(): SecretKey
+  + decrypt(String, SecretKey, byte[]): String
+}
+class AccountManager {
+  + AccountManager(): 
+  - loadAccounts(): void
+  + checkExist(String, String): boolean
+  + createAccount(String, String): boolean
+  - saveAccounts(): void
+}
+class AutoPlayer {
+  + AutoPlayer(String, int): 
+  + wantsToHit(): boolean
+}
+class BlackJackManager {
+  + BlackJackManager(): 
+  + saveState(BlackjackGame): String
+  + loadState(BlackjackGame, String): void
+  - combineIvAndCiphertext(byte[], String): String
+  - splitIvAndCiphertext(String): String[]
+}
+class BlackjackController {
+  + BlackjackController(): 
+  - stage: Stage
+  - refreshUI(): void
+  - onSaveState(): void
+  + initialize(): void
+  - onStand(): void
+  - onLoadState(): void
+  - onHit(): void
+  - backToMainMenu(): void
+  - onNextRound(): void
+   stage: Stage
+}
+class BlackjackController_Sean {
+  + BlackjackController_Sean(): 
+  + playerStand(ActionEvent): void
+  + clearBet(): void
+  + playerHit(ActionEvent): void
+  + clearBet(PlayerType): void
+  + playerLoadGame(ActionEvent): void
+  - statusTextAnimation(Label, String): void
+  + playerDoubleDown(ActionEvent): void
+  + initialize(): void
+  + playerMainMenu(ActionEvent): void
+  - statusTextAnimation(Label, String, int): void
+  + playerSaveGame(ActionEvent): void
+  + updateBandF(PlayerType, int, int): void
+}
+class BlackjackGame {
+  - BlackjackGame(): 
+  - roundNumber: int
+  - onRoundComplete: Runnable
+  - roundOver: boolean
+  - players: List<Player>
+  - INSTANCE: BlackjackGame
+  - scoreManager: HighScoreManager
+  + startNewRound(): void
+  - promptForBet(Player): int
+  + stand(): void
+  - settleAllBets(): void
+  - addCardBack(GridPane, int, int): void
+  + updateScore(): void
+  - addCardToGrid(GridPane, Card, int, int): void
+  - getCardImageFileName(Card): String
+  + loadFromString(String): void
+  - nextTurn(): void
+  + hit(): void
+  + render(GridPane): void
+   roundNumber: int
+   onRoundComplete: Runnable
+   roundOver: boolean
+   saveString: String
+   username: String
+   players: List<Player>
+   scoreManager: HighScoreManager
+   INSTANCE: BlackjackGame
+}
+class BlackjackMain {
+  + BlackjackMain(): 
+  + start(Stage): void
+}
+class BodyPart {
+  + BodyPart(Rectangle): 
+  + addPosition(Point2D): void
+  + updateDequeueSize(int): void
+   currentPosition: Point2D
+   position: Point2D
+   properRenderPosition: Point2D
+}
+class Card {
+  + Card(String, String): 
+  - rank: String
+  + toString(): String
+   suit: String
+   rank: String
+}
+class Dealer {
+  + Dealer(): 
+  + wantsToHit(): boolean
+}
+class Deck {
+  + Deck(): 
+  + size(): int
+  - lookupValue(String): int
+  + reset(): void
+  + draw(): Card
+  + shuffle(): void
+}
+enum Direction << enumeration >> {
+  + Direction(): 
+  + values(): Direction[]
+  + valueOf(String): Direction
+}
+class HighScoreManager {
+  + HighScoreManager(): 
+  + updateBlackjackScore(String, int): void
+  + updateSnakeScore(String, int): void
+  - loadScores(): void
+  + getSnakeScore(String): int
+  + getBlackjackScore(String): int
+  + saveScores(): void
+  + defaultScoresForUsers(String): void
+   top5SnakeScores: List<Entry<String, Integer>>
+   top5BlackScores: List<Entry<String, Integer>>
+}
+class HighScoreManagerTest {
+  + HighScoreManagerTest(): 
+  ~ testLoadScoresFileDoesNotExist(): void
+  ~ testGetDefaultScoreForNonExistentUser(): void
+  ~ testLoadScores(): void
+  ~ setUp(): void
+  ~ testSaveScores(): void
+  ~ tearDown(): void
+  ~ testUpdateBlackjackScore(): void
+  ~ testGetMapsDirectly(): void
+  ~ testDefaultScoresForNewUser(): void
+  ~ testLoadScoresWithInvalidFormat(): void
+  ~ testUpdateSnakeScoreLowerScore(): void
+  ~ testUpdateSnakeScoreHigherScore(): void
+}
+class HumanPlayer {
+  + HumanPlayer(String): 
+  + wantsToHit(): boolean
+}
+class LoginController {
+  + LoginController(): 
+  + handleLogin(): void
+  - openGameManager(): void
+  + handleCreateAccount(): void
+}
+class LoginControllerTest {
+  + LoginControllerTest(): 
+  ~ setUp(): void
+  ~ handleLogin_successful(): void
+  ~ handleLogin_failure(): void
+  ~ handleCreateAccount_failure(): void
+  ~ handleCreateAccount_success(): void
+}
+class Main {
+  + Main(): 
+  + start(Stage): void
+  + main(String[]): void
+}
+class MainMenuController {
+  + MainMenuController(): 
+  - launchSnake(): void
+  - launchBlackjack(): void
+  + initialize(): void
+}
+class PasswordHash {
+  + PasswordHash(String): 
+  + PasswordHash(): 
+  + checkStoredPassword(String, String): Boolean
+  + printPassword(): void
+   hashedPassword: String
+}
+class Player {
+  + Player(String): 
+  # hand: List<Card>
+  # balance: int
+  # name: String
+  # currentBet: int
+  + winBet(): void
+  + handValue(): int
+  + pushBet(): void
+  + loseBet(): void
+  + addCard(Card): void
+  + take(Card): void
+  + wantsToHit(): boolean
+  + blackjackWin(): void
+  + clearHand(): void
+  + hasBlackjack(): boolean
+  + placeBet(int): void
+   name: String
+   balance: int
+   hand: List<Card>
+   currentBet: int
+}
+enum PlayerType << enumeration >> {
+  + PlayerType(): 
+  + values(): PlayerType[]
+  + valueOf(String): PlayerType
+}
+class SnakeGame {
+  + SnakeGame(): 
+  - scoreManager: HighScoreManager
+  + snakeWallCollision(Rectangle, Stage): void
+  + launchGame(Stage, String): void
+  + midGame(Stage, Scene): void
+  - gameOver(Stage): void
+  - moveSnakeHead(Rectangle, double): void
+  + getNewSnakeBodyPart(double, double, Group): void
+  - updatePosition(double): void
+  + checkFood(Rectangle, Rectangle, Scene): void
+  + handleKeyPressGameScene(Stage): void
+  + snakeBodyCollision(Rectangle, Stage): void
+  - getNewFood(Scene): Rectangle
+  - startGameLoop(Stage): void
+  - updateScore(Text): void
+  + start(Stage): void
+  - restartGame(Stage): void
+  + moveSnakeBody(double, double): void
+   username: String
+   preScene: Scene
+   scoreManager: HighScoreManager
+   stage: Stage
+   gameScene: Scene
+}
+class TestLoginController {
+  + TestLoginController(): 
+  + handleCreateAccount(): void
+  + handleLogin(): void
+}
+
+AutoPlayer                -[#000082,plain]-^  Player                   
+BodyPart                  +-[#820000,plain]-  SnakeGame                
+Dealer                    -[#000082,plain]-^  Player                   
+Direction                 +-[#820000,plain]-  SnakeGame                
+HumanPlayer               -[#000082,plain]-^  Player                   
+PlayerType                +-[#820000,plain]-  BlackjackController_Sean 
+TestLoginController       +-[#820000,plain]-  LoginControllerTest      
+@enduml
