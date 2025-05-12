@@ -10,7 +10,7 @@
 <?import javafx.scene.paint.Color?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="200.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.snakeblackjack.MainMenuController">
+<AnchorPane prefHeight="200.0" prefWidth="659.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.snakeblackjack.MainMenuController">
    <ImageView fitHeight="419.0" fitWidth="666.0" layoutX="-7.0" layoutY="-20.0" pickOnBounds="true" preserveRatio="true">
       <image>
          <Image url="@images/MainMenuBkGd.jpg" />

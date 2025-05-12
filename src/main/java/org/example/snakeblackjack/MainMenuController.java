@@ -33,7 +33,7 @@ public class MainMenuController {
 
         // Create a SnakeGame instance
         SnakeGame game = new SnakeGame();
-
+        game.setStage(stage); //for returning to mainmenu
         // Pass in username and score manager
         game.setUsername(LoginController.loggedInUserName); // pass logged in user
         game.setScoreManager(new HighScoreManager());   // pass score manager
