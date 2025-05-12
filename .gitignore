@@ -36,7 +36,3 @@ build/
 .DS_Store
 
 ### Maven ###
-mvnw
-mvnw.cmd
-.mvn
-pom.xml

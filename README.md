@@ -10,9 +10,14 @@ login uses hashed and salted passwords for secure storage (using bcrypt). We've 
 and saving game state. Snake is snake, not much to talk about there.
 
 # Design
-
+![image](/UML.png)
 _UML Diagram of our Codebase_
-
+<br>
+There's a lot of code, but its largely split into 3 categories:
+<br>
+Snake Game, BlackJack, and GameManager/Login.
+<br>
+Zoom in if you want to see more.
 
 # Installation Instructions
 Pre-requisites:
