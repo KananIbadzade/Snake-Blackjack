@@ -63,6 +63,6 @@ Ryan: This README, Encrypting/Decrypting Game state, Hashing passwords, and some
 Sean:   
 Efe: I have added snake movement, highscore storing and displaying on snake game, and adding songs to both games.
 <br>
-Kenan:  
+Kanan: Implemented full Blackjack game logic with betting, balance handling, other features, and UI updates.
 
 
