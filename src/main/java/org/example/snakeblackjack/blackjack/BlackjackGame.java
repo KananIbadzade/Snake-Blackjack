@@ -337,4 +337,19 @@ public class BlackjackGame {
     public void loadFromString(String state) {
         BlackJackManager.loadState(this, state);
     }
+
+    public void resetGameState() {
+        roundNumber = 0;
+        roundOver = false;
+        lastRoundStatus = "";
+        roundResults.clear();
+        for(int i = 0; i<4; i++){
+            players.get(i).clearHand();
+            players.get(i).setBalance(1000);
+            players.get(i).setCurrentBet(0);
+        }
+        deck.reset();
+        deck.shuffle();
+
+    }
 }

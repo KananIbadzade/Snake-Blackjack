@@ -392,6 +392,7 @@ public class SnakeGame extends Application {
 
         gameScene.setOnMouseClicked(event -> {
             System.out.println("Mouse clicked at: X=" + event.getX() + ", Y=" + event.getY());
+            event.consume();
         });
     }
 
@@ -613,7 +614,7 @@ public class SnakeGame extends Application {
         stage.setHeight(600);
         stage.setResizable(false);
         stage.setScene(preScene);
-
+        preScene.getRoot().requestFocus();
 
         SnakeGame game = new SnakeGame();
         //game.midGame(root, scene, snakeHead, text);
@@ -622,6 +623,7 @@ public class SnakeGame extends Application {
             if ((event.getCode() == KeyCode.SPACE)) {
                 event.consume();
                 stage.setScene(gameScene);
+                gameScene.getRoot().requestFocus();
                 inGame = true;
                 startGameLoop(stage);
             }

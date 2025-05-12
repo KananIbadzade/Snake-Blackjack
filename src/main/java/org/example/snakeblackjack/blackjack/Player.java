@@ -18,6 +18,9 @@ public abstract class Player {
 
     // --- Getters ---
 
+    public void setBalance(int balance) { this.balance = balance;}
+    public void setCurrentBet(int currentBet) { this.currentBet = currentBet;}
+
     public int getBalance() {
         return balance;
     }
