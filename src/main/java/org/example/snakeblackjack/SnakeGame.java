@@ -61,6 +61,8 @@ public class SnakeGame extends Application {
     //private Deque<Point2D> headTrail = new ArrayDeque<>();
     private int SPACING_FRAMES = ( (int) (30.0 / speed) + 1);
     private Text gameOverText;
+    private Text pauseText;
+    private TextFlow pauseTextHint;
     private TextFlow gameRestartHint;
     private Rectangle wallBox;
 
@@ -379,6 +381,8 @@ public class SnakeGame extends Application {
                     } else if (event.getCode() == KeyCode.ESCAPE) {
                         if (timeline.getStatus() == Animation.Status.PAUSED) {
                             event.consume();
+                            pauseText.setVisible(false);
+                            pauseTextHint.setVisible(false);
                             timeline.play();
                             inGame = true;
                         }
@@ -399,6 +403,23 @@ public class SnakeGame extends Application {
                     if (timeline.getStatus() == Animation.Status.RUNNING) {
                         timeline.pause();
                         inGame = false;
+
+                        double textWidth = pauseText.getLayoutBounds().getWidth();
+                        double textHeight = pauseText.getLayoutBounds().getHeight();
+                        double rectCenterX = wallBox.getX() + wallBox.getWidth() / 2;
+                        double rectCenterY = wallBox.getY() + wallBox.getHeight() / 2;
+
+                        pauseText.setX(rectCenterX - textWidth / 2);
+                        pauseTextHint.setLayoutX(pauseText.getX() + 10);
+                        pauseText.setY(rectCenterY + textHeight / 4);
+                        pauseTextHint.setLayoutY(pauseText.getY() + 35);
+
+                        //System.out.println("Game Over!");
+                        pauseText.setVisible(true);
+                        pauseTextHint.setVisible(true);
+                        pauseTextHint.toFront();
+                        pauseText.toFront();
+
                     } else if (timeline.getStatus() == Animation.Status.PAUSED) {
                         timeline.play();
                         inGame = true;
@@ -407,6 +428,8 @@ public class SnakeGame extends Application {
                 event.consume();
             }
         });
+
+
 
         gameScene.setOnMouseClicked(event -> {
             System.out.println("Mouse clicked at: X=" + event.getX() + ", Y=" + event.getY());
@@ -604,6 +627,31 @@ public class SnakeGame extends Application {
         gameRestartHint.setVisible(false);
         gameOverText.setVisible(false);
 
+        //Pause Game Text
+        pauseText = new Text("GAME PAUSED");
+        pauseText.setX(250);  // depends on your scene width
+        pauseText.setY(325);
+        pauseText.setFill(Color.RED);
+        pauseText.setFont(Font.font("Verdana", FontWeight.BOLD, 50));
+        pauseText.setVisible(false);
+
+        Text pausedFirstPortion = new Text("Press ");
+        hintFirstPortion.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
+        hintFirstPortion.setFill(Color.web("22b078"));
+
+        Text pausedItalicPortion = new Text("ESC");
+        hintItalicPortion.setFont(Font.font("Verdana", FontWeight.BOLD, FontPosture.ITALIC, 20));
+        hintItalicPortion.setFill(Color.web("22b078"));
+
+
+        Text pausedLastPortion = new Text(" to resume");
+        hintLastPortion.setFont(Font.font("Verdana", FontWeight.BOLD, 20));
+        hintLastPortion.setFill(Color.web("22b078"));
+
+        pauseTextHint = new TextFlow(pausedFirstPortion, pausedItalicPortion, pausedLastPortion);
+        pauseTextHint.setVisible(false);
+        pauseText.setVisible(false);
+
 
         root.getChildren().add(text);
         root.getChildren().add(food);
@@ -611,6 +659,8 @@ public class SnakeGame extends Application {
 
         root.getChildren().add(gameOverText);
         root.getChildren().add(gameRestartHint);
+        root.getChildren().add(pauseText);
+        root.getChildren().add(pauseTextHint);
         root.getChildren().add(wallBox);
 
 
