@@ -60,16 +60,13 @@ Step 4: Profit!
 
 # Contribution  
 Ryan: This README, Encrypting/Decrypting Game state, Hashing passwords, and some other small contributions   
-Sean:   
+
+Sean:   Snake game, MainMenu, HighScore for Black Jack
+
 Efe: I have added snake movement, highscore storing and displaying on snake game, and adding songs to both games.
 <br>
+
 Kanan: Implemented full Blackjack game logic with betting, balance handling, other features, and UI updates.
-Ryan:  This README, Encrypting/Decrypting Game state, Hashing passwords, Unit Test, and some other small contributions   
 
-Sean:  Snake game, MainMenu, HighScore for Black Jack
-
-Efe:   Snake game, Login Menu, HighScore for Snake
-
-Kenan: Black Jack whole game
 
 
