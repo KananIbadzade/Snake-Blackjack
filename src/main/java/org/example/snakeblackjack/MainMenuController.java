@@ -84,7 +84,7 @@ public class MainMenuController {
             topScoresArea.setText(sb.toString());
 
             List<Map.Entry<String, Integer>> top5BlkJk = scoreManager.getTop5BlackScores();
-            StringBuilder sbBlkJk = new StringBuilder("🏆 Top 5 BlackJack Scores:\n");
+            StringBuilder sbBlkJk = new StringBuilder("🏆 Top 5 BlackJack Scores (Rounds Won):\n");
             int rankBlkJk = 1;
             for (Map.Entry<String, Integer> entry : top5BlkJk) {
                 sbBlkJk.append(rankBlkJk++).append(". ")
