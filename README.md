@@ -17,7 +17,24 @@ There's a lot of code, but its largely split into 3 categories:
 <br>
 Snake Game, BlackJack, and GameManager/Login.
 <br>
-Open the image in  a new tab and zoom in if you want to see more details.
+<br>
+AccountManager/HighScoreManager/MainMenuController: Aggregated details from games and displays them in the menu
+<br>
+Player/HumanPlayer: Class defines what a player does/operates
+<br>
+Deck: Class initializes all the cards in a full deck
+<br>
+Card: Class holds properties of a playing card + getters/setters
+<br>
+BlackJackManager: Handles saving and loading states as well as applying encryption/decryption
+<br>
+BlackJackGame: Handles Blackjack game logic and UI rendering
+<br>
+BlackjackController: Handles Blackjack menu options
+<br>
+AESEncryption: A wrapper around the javax crpyto library/package to implement AES
+<br>
+Open the image in a new tab and zoom in if you want to see more details.
 
 # Installation Instructions
 Pre-requisites:
@@ -42,6 +59,11 @@ Step 4: Profit!
 
 
 # Contribution  
+Ryan: This README, Encrypting/Decrypting Game state, Hashing passwords, and some other small contributions   
+Sean:   
+Efe: I have added snake movement, highscore storing and displaying on snake game, and adding songs to both games.
+<br>
+Kanan: Implemented full Blackjack game logic with betting, balance handling, other features, and UI updates.
 Ryan:  This README, Encrypting/Decrypting Game state, Hashing passwords, Unit Test, and some other small contributions   
 
 Sean:  Snake game, MainMenu, HighScore for Black Jack
